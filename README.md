@@ -17,17 +17,17 @@ La solución está construida como una arquitectura de **microservicios independ
 | Servicio | Puerto | BD | Responsabilidad | Consume a |
 |---|---|---|---|---|
 | **api-gateway** | 8080 | — | Punto de entrada único (Spring Cloud Gateway) | todos |
-| **bff** | 8081 | — | Fachada de autenticación (login/registro) hacia ms-auth | ms-auth |
-| **ms-cliente** | 8082 | Postgres `clientedb` | Clientes | — |
-| **ms-equipo** | 8083 | MySQL `equipodb` | Equipos ingresados a mantención + tipos de equipo | ms-cliente |
-| **ms-tecnico** | 8084 | Postgres `tecnicodb` | Técnicos + especialidades | — |
-| **ms-servicio** | 8085 | MySQL `serviciodb` | Catálogo de servicios + categorías | — |
-| **ms-repuesto** | 8086 | MySQL `repuestodb` | Inventario de repuestos y control de stock | ms-proveedor |
-| **ms-proveedor** | 8087 | Postgres `proveedordb` | Proveedores de repuestos | — |
-| **ms-orden** | 8088 | Postgres `ordendb` | Órdenes de trabajo (núcleo del negocio) | ms-cliente, ms-equipo, ms-tecnico, ms-servicio |
-| **ms-factura** | 8089 | MySQL `facturadb` | Facturación de órdenes | ms-orden |
-| **ms-auth** | 8090 | Postgres `authdb` | Login / registro, emisión de JWT (24h) | — |
-| **ms-agenda** | 8091 | Postgres `agendadb` | Agendamiento de citas cliente ↔ técnico | ms-cliente, ms-tecnico |
+| **bff** | 8081 | — | Fachada de autenticación (login/registro) hacia auth | auth |
+| **client** | 8082 | Postgres `clientedb` | Clientes | — |
+| **equipment** | 8083 | MySQL `equipodb` | Equipos ingresados a mantención + tipos de equipo | client |
+| **technician** | 8084 | Postgres `tecnicodb` | Técnicos + especialidades | — |
+| **service** | 8085 | MySQL `serviciodb` | Catálogo de servicios + categorías | — |
+| **part** | 8086 | MySQL `repuestodb` | Inventario de repuestos y control de stock | supplier |
+| **supplier** | 8087 | Postgres `proveedordb` | Proveedores de repuestos | — |
+| **order** | 8088 | Postgres `ordendb` | Órdenes de trabajo (núcleo del negocio) | client, equipment, technician, service |
+| **invoice** | 8089 | MySQL `facturadb` | Facturación de órdenes | order |
+| **auth** | 8090 | Postgres `authdb` | Login / registro, emisión de JWT (24h) | — |
+| **agenda** | 8091 | Postgres `agendadb` | Agendamiento de citas cliente ↔ técnico | client, technician |
 
 Un solo contenedor **Postgres 17** y uno **MySQL 8.4** alojan todas las bases de datos (una por microservicio), inicializadas por `init/postgres-init.sql` e `init/mysql-init.sql`. Cada microservicio administra su propio esquema con **Flyway**.
 
@@ -37,19 +37,19 @@ Todo el tráfico externo entra por `http://localhost:8080`. El gateway antepone 
 
 | Ruta del Gateway | Destino |
 |---|---|
-| `/api/clientes/**` | ms-cliente → `/clientes` |
-| `/api/equipos/**` | ms-equipo → `/equipos` |
-| `/api/tipos-equipo/**` | ms-equipo → `/tipos-equipo` |
-| `/api/tecnicos/**` | ms-tecnico → `/tecnicos` |
-| `/api/especialidades/**` | ms-tecnico → `/especialidades` |
-| `/api/servicios/**` | ms-servicio → `/servicios` |
-| `/api/categorias/**` | ms-servicio → `/categorias` |
-| `/api/repuestos/**` | ms-repuesto → `/repuestos` |
-| `/api/proveedores/**` | ms-proveedor → `/proveedores` |
-| `/api/ordenes/**` | ms-orden → `/ordenes` |
-| `/api/facturas/**` | ms-factura → `/facturas` |
-| `/api/citas/**` | ms-agenda → `/citas` |
-| `/api/auth/**` | **bff** → `/login`, `/register` (que a su vez consulta a ms-auth) |
+| `/api/clientes/**` | client → `/clientes` |
+| `/api/equipos/**` | equipment → `/equipos` |
+| `/api/tipos-equipo/**` | equipment → `/tipos-equipo` |
+| `/api/tecnicos/**` | technician → `/tecnicos` |
+| `/api/especialidades/**` | technician → `/especialidades` |
+| `/api/servicios/**` | service → `/servicios` |
+| `/api/categorias/**` | service → `/categorias` |
+| `/api/repuestos/**` | part → `/repuestos` |
+| `/api/proveedores/**` | supplier → `/proveedores` |
+| `/api/ordenes/**` | order → `/ordenes` |
+| `/api/facturas/**` | invoice → `/facturas` |
+| `/api/citas/**` | agenda → `/citas` |
+| `/api/auth/**` | **bff** → `/login`, `/register` (que a su vez consulta a auth) |
 
 El listado de rutas activas también se puede consultar en vivo vía Actuator: `GET http://localhost:8080/actuator/gateway/routes`.
 
@@ -60,16 +60,16 @@ Cada microservicio expone su propia documentación OpenAPI/Swagger UI:
 | Servicio | Swagger UI |
 |---|---|
 | bff | http://localhost:8081/swagger-ui.html |
-| ms-cliente | http://localhost:8082/swagger-ui.html |
-| ms-equipo | http://localhost:8083/swagger-ui.html |
-| ms-tecnico | http://localhost:8084/swagger-ui.html |
-| ms-servicio | http://localhost:8085/swagger-ui.html |
-| ms-repuesto | http://localhost:8086/swagger-ui.html |
-| ms-proveedor | http://localhost:8087/swagger-ui.html |
-| ms-orden | http://localhost:8088/swagger-ui.html |
-| ms-factura | http://localhost:8089/swagger-ui.html |
-| ms-auth | http://localhost:8090/swagger-ui.html |
-| ms-agenda | http://localhost:8091/swagger-ui.html |
+| client | http://localhost:8082/swagger-ui.html |
+| equipment | http://localhost:8083/swagger-ui.html |
+| technician | http://localhost:8084/swagger-ui.html |
+| service | http://localhost:8085/swagger-ui.html |
+| part | http://localhost:8086/swagger-ui.html |
+| supplier | http://localhost:8087/swagger-ui.html |
+| order | http://localhost:8088/swagger-ui.html |
+| invoice | http://localhost:8089/swagger-ui.html |
+| auth | http://localhost:8090/swagger-ui.html |
+| agenda | http://localhost:8091/swagger-ui.html |
 
 > El api-gateway no tiene Swagger propio (no expone lógica de negocio, solo enruta); la documentación de cada endpoint se revisa en el Swagger del microservicio dueño del recurso.
 
@@ -88,7 +88,7 @@ Desde la raíz del repositorio:
 docker compose up -d --build
 ```
 
-Esto construye las 12 imágenes (api-gateway, bff, ms-auth y los 9 microservicios de dominio) y levanta además los contenedores de Postgres y MySQL con sus bases de datos ya creadas. La primera vez puede tardar varios minutos mientras se descargan dependencias.
+Esto construye las 12 imágenes (api-gateway, bff, auth y los 9 microservicios de dominio) y levanta además los contenedores de Postgres y MySQL con sus bases de datos ya creadas. La primera vez puede tardar varios minutos mientras se descargan dependencias.
 
 Para verificar que todo quedó arriba:
 
@@ -99,7 +99,7 @@ docker compose ps
 Para ver logs de un servicio puntual:
 
 ```bash
-docker compose logs -f ms-orden
+docker compose logs -f order
 ```
 
 Para detener todo:
@@ -113,9 +113,9 @@ docker compose down
 ### Ejecución individual de un microservicio (desarrollo)
 
 1. Levantar solo las bases de datos: `docker compose up -d postgres mysql`.
-2. Pararse en la carpeta del microservicio (ej. `cd ms-cliente`).
+2. Pararse en la carpeta del microservicio (ej. `cd client`).
 3. Ejecutar `mvn spring-boot:run` (usa los valores por defecto de `application.yml`, que apuntan a `localhost`).
-4. Repetir para cada microservicio que se quiera levantar fuera de Docker. Los microservicios que consumen a otros (ms-equipo, ms-repuesto, ms-orden, ms-factura, ms-agenda, bff, api-gateway) necesitan que sus dependencias estén arriba en el puerto esperado (ver tabla de arquitectura).
+4. Repetir para cada microservicio que se quiera levantar fuera de Docker. Los microservicios que consumen a otros (equipment, part, order, invoice, agenda, bff, api-gateway) necesitan que sus dependencias estén arriba en el puerto esperado (ver tabla de arquitectura).
 
 ### Probar los endpoints
 
@@ -130,14 +130,14 @@ Pendiente. El plan es desplegar al menos el api-gateway y 2 microservicios en Ra
 Los 12 servicios tienen pruebas con JUnit 5 + Mockito (capa de servicio, con mocks de repositorios y clients remotos), pruebas de controller (validando `ResponseEntity` y códigos HTTP) y pruebas de repositorio con H2 en memoria (usando las migraciones Flyway reales). Para correr las pruebas de un microservicio:
 
 ```bash
-cd ms-cliente
+cd client
 mvn test
 ```
 
 ## Tecnologías utilizadas
 
 - Java 25, Spring Boot 3.4.5, Maven
-- Spring Web, Spring Data JPA, Spring Validation, Spring Security (ms-auth/bff)
+- Spring Web, Spring Data JPA, Spring Validation, Spring Security (auth/bff)
 - Spring Cloud Gateway (api-gateway)
 - PostgreSQL 17 y MySQL 8.4, Flyway para migraciones
 - JJWT para JSON Web Tokens
@@ -147,20 +147,22 @@ mvn test
 
 ## Estructura del repositorio
 
-```
+```text
 tecnofix/
-├── api-gateway/       # Spring Cloud Gateway - punto de entrada único
+├── agenda/             # Agendamiento de citas
+├── api-gateway/        # Spring Cloud Gateway - punto de entrada único
+├── auth/               # Login, registro, JWT
 ├── bff/                # Backend for Frontend - fachada de autenticación
-├── ms-auth/            # Login, registro, JWT
-├── ms-cliente/         # Clientes
-├── ms-equipo/          # Equipos y tipos de equipo
-├── ms-tecnico/         # Técnicos y especialidades
-├── ms-servicio/        # Catálogo de servicios y categorías
-├── ms-proveedor/       # Proveedores
-├── ms-repuesto/        # Inventario de repuestos
-├── ms-orden/           # Órdenes de trabajo (núcleo del negocio)
-├── ms-factura/         # Facturación
-├── ms-agenda/          # Agendamiento de citas
+├── client/             # Clientes
+├── docs/               # Documentación del proyecto
+├── equipment/          # Equipos y tipos de equipo
 ├── init/               # Scripts de inicialización de Postgres y MySQL
-└── docker-compose.yml  # Orquestación de todo el ecosistema
+├── invoice/            # Facturación
+├── order/              # Órdenes de trabajo (núcleo del negocio)
+├── part/               # Inventario de repuestos
+├── service/            # Catálogo de servicios y categorías
+├── supplier/           # Proveedores
+├── technician/         # Técnicos y especialidades
+├── docker-compose.yml  # Orquestación de todo el ecosistema
+└── README.md
 ```

@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="es"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Order.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">order</a> &gt; <a href="index.source.html" class="el_package">com.duocuc.order.entity</a> &gt; <span class="el_source">Order.java</span></div><h1>Order.java</h1><pre class="source lang-java linenums">package com.duocuc.order.entity;
+
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.Table;
+
+import java.math.BigDecimal;
+import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
+
+// The table name is backtick-quoted because ORDER is a reserved SQL keyword in both
+// Postgres and MySQL; Hibernate renders backtick-quoted names using the correct quote
+// character for the active dialect (double quotes on Postgres).
+@Entity
+@Table(name = &quot;`order`&quot;)
+public class Order {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    // Remote references (client, equipment and technician services). Not local FKs:
+    // validated via RestClient.
+    @Column(name = &quot;client_id&quot;, nullable = false)
+    private Long clientId;
+
+    @Column(name = &quot;equipment_id&quot;, nullable = false)
+    private Long equipmentId;
+
+    @Column(name = &quot;technician_id&quot;, nullable = false)
+    private Long technicianId;
+
+<span class="fc" id="L42">    @Enumerated(EnumType.STRING)</span>
+    @Column(nullable = false, length = 20)
+    private OrderStatus status = OrderStatus.RECEIVED;
+
+<span class="fc" id="L46">    @Column(nullable = false, precision = 10, scale = 2)</span>
+    private BigDecimal total = BigDecimal.ZERO;
+
+<span class="fc" id="L49">    @Column(name = &quot;created_date&quot;, nullable = false)</span>
+<span class="fc" id="L50">    private LocalDate createdDate = LocalDate.now();</span>
+
+<span class="fc" id="L52">    @OneToMany(mappedBy = &quot;order&quot;, cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)</span>
+    private List&lt;OrderItem&gt; items = new ArrayList&lt;&gt;();
+
+<span class="fc" id="L55">    public Order() {}</span>
+
+<span class="fc" id="L57">    public Long getId() { return id; }</span>
+<span class="fc" id="L58">    public void setId(Long id) { this.id = id; }</span>
+
+<span class="fc" id="L60">    public Long getClientId() { return clientId; }</span>
+<span class="fc" id="L61">    public void setClientId(Long clientId) { this.clientId = clientId; }</span>
+
+<span class="fc" id="L63">    public Long getEquipmentId() { return equipmentId; }</span>
+<span class="fc" id="L64">    public void setEquipmentId(Long equipmentId) { this.equipmentId = equipmentId; }</span>
+
+<span class="fc" id="L66">    public Long getTechnicianId() { return technicianId; }</span>
+<span class="fc" id="L67">    public void setTechnicianId(Long technicianId) { this.technicianId = technicianId; }</span>
+
+<span class="fc" id="L69">    public OrderStatus getStatus() { return status; }</span>
+<span class="fc" id="L70">    public void setStatus(OrderStatus status) { this.status = status; }</span>
+
+<span class="fc" id="L72">    public BigDecimal getTotal() { return total; }</span>
+<span class="fc" id="L73">    public void setTotal(BigDecimal total) { this.total = total; }</span>
+
+<span class="fc" id="L75">    public LocalDate getCreatedDate() { return createdDate; }</span>
+<span class="nc" id="L76">    public void setCreatedDate(LocalDate createdDate) { this.createdDate = createdDate; }</span>
+
+<span class="fc" id="L78">    public List&lt;OrderItem&gt; getItems() { return items; }</span>
+<span class="fc" id="L79">    public void setItems(List&lt;OrderItem&gt; items) { this.items = items; }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.15.202606040825</span></div></body></html>

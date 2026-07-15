@@ -1,0 +1,17 @@
+GROUP,PACKAGE,CLASS,INSTRUCTION_MISSED,INSTRUCTION_COVERED,BRANCH_MISSED,BRANCH_COVERED,LINE_MISSED,LINE_COVERED,COMPLEXITY_MISSED,COMPLEXITY_COVERED,METHOD_MISSED,METHOD_COVERED
+service,com.duocuc.service.dto,MaintenanceServiceResponse,0,24,0,0,0,1,0,1,0,1
+service,com.duocuc.service.dto,MaintenanceServiceRequest,0,15,0,0,0,1,0,1,0,1
+service,com.duocuc.service.dto,CategoryRequest,0,9,0,0,0,1,0,1,0,1
+service,com.duocuc.service.dto,CategoryResponse,0,15,0,0,0,1,0,1,0,1
+service,com.duocuc.service,ServiceApplication,5,3,0,0,2,1,1,1,1,1
+service,com.duocuc.service.service.impl,ServiceCatalogServiceImpl,122,166,11,5,22,35,10,11,4,9
+service,com.duocuc.service.service.impl,CategoryServiceImpl,61,131,5,3,9,29,5,10,2,9
+service,com.duocuc.service.exception,GlobalExceptionHandler,121,0,2,0,23,0,10,0,9,0
+service,com.duocuc.service.exception,BusinessRuleException,0,4,0,0,0,2,0,1,0,1
+service,com.duocuc.service.exception,ResourceNotFoundException,0,4,0,0,0,2,0,1,0,1
+service,com.duocuc.service.exception,DuplicateResourceException,0,4,0,0,0,2,0,1,0,1
+service,com.duocuc.service.controller,ServiceController,7,34,0,0,1,9,1,5,1,5
+service,com.duocuc.service.controller,CategoryController,7,34,0,0,1,9,1,5,1,5
+service,com.duocuc.service.config,OpenApiConfig,17,0,0,0,5,0,2,0,2,0
+service,com.duocuc.service.entity,MaintenanceService,0,49,0,0,0,15,0,13,0,13
+service,com.duocuc.service.entity,Category,0,35,0,0,0,11,0,9,0,9

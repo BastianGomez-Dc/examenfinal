@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>JwtTokenService.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">bff</a> &gt; <a href="index.source.html" class="el_package">com.duocuc.bff.security</a> &gt; <span class="el_source">JwtTokenService.java</span></div><h1>JwtTokenService.java</h1><pre class="source lang-java linenums">package com.duocuc.bff.security;
+
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.security.Keys;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Service;
+
+import javax.crypto.SecretKey;
+import java.nio.charset.StandardCharsets;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+
+@Service
+public class JwtTokenService {
+
+    private final SecretKey signingKey;
+
+<span class="fc" id="L19">    public JwtTokenService(@Value(&quot;${security.jwt.secret}&quot;) String secret) {</span>
+<span class="fc" id="L20">        this.signingKey = Keys.hmacShaKeyFor(sha256(secret));</span>
+<span class="fc" id="L21">    }</span>
+
+    public String extractSubject(String token) {
+<span class="fc" id="L24">        Claims claims = Jwts.parser()</span>
+<span class="fc" id="L25">                .verifyWith(signingKey)</span>
+<span class="fc" id="L26">                .build()</span>
+<span class="fc" id="L27">                .parseSignedClaims(token)</span>
+<span class="fc" id="L28">                .getPayload();</span>
+
+<span class="fc" id="L30">        return claims.getSubject();</span>
+    }
+
+    private byte[] sha256(String value) {
+        try {
+<span class="fc" id="L35">            MessageDigest digest = MessageDigest.getInstance(&quot;SHA-256&quot;);</span>
+<span class="fc" id="L36">            return digest.digest(value.getBytes(StandardCharsets.UTF_8));</span>
+<span class="nc" id="L37">        } catch (NoSuchAlgorithmException exception) {</span>
+<span class="nc" id="L38">            throw new IllegalStateException(&quot;No fue posible inicializar SHA-256&quot;, exception);</span>
+        }
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.15.202606040825</span></div></body></html>

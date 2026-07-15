@@ -1,0 +1,13 @@
+GROUP,PACKAGE,CLASS,INSTRUCTION_MISSED,INSTRUCTION_COVERED,BRANCH_MISSED,BRANCH_COVERED,LINE_MISSED,LINE_COVERED,COMPLEXITY_MISSED,COMPLEXITY_COVERED,METHOD_MISSED,METHOD_COVERED
+bff,com.duocuc.bff.client,AuthClient,43,0,0,0,14,0,3,0,3,0
+bff,com.duocuc.bff.dto,AuthResponse,0,6,0,0,0,1,0,1,0,1
+bff,com.duocuc.bff.dto,RegisterRequest,0,9,0,0,0,1,0,1,0,1
+bff,com.duocuc.bff.dto,LoginRequest,0,9,0,0,0,1,0,1,0,1
+bff,com.duocuc.bff.services,AuthService,0,16,0,0,0,5,0,3,0,3
+bff,com.duocuc.bff.security,JwtTokenService,7,31,0,0,2,11,0,3,0,3
+bff,com.duocuc.bff.security,JwtAuthenticationFilter,55,0,4,0,18,0,4,0,2,0
+bff,com.duocuc.bff,BffApplication,8,0,0,0,3,0,2,0,2,0
+bff,com.duocuc.bff.controller,AuthController,0,16,0,0,0,5,0,3,0,3
+bff,com.duocuc.bff.config,AppConfig,8,0,0,0,3,0,3,0,3,0
+bff,com.duocuc.bff.config,SecurityConfig,81,0,0,0,14,0,7,0,7,0
+bff,com.duocuc.bff.config,OpenApiConfig,17,0,0,0,5,0,2,0,2,0

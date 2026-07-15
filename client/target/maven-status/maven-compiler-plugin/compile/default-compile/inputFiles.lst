@@ -1,0 +1,13 @@
+C:\Users\loloc\Desktop\tecnofix\client\src\main\java\com\duocuc\client\ClientApplication.java
+C:\Users\loloc\Desktop\tecnofix\client\src\main\java\com\duocuc\client\config\OpenApiConfig.java
+C:\Users\loloc\Desktop\tecnofix\client\src\main\java\com\duocuc\client\controller\ClientController.java
+C:\Users\loloc\Desktop\tecnofix\client\src\main\java\com\duocuc\client\dto\ClientRequest.java
+C:\Users\loloc\Desktop\tecnofix\client\src\main\java\com\duocuc\client\dto\ClientResponse.java
+C:\Users\loloc\Desktop\tecnofix\client\src\main\java\com\duocuc\client\entity\Client.java
+C:\Users\loloc\Desktop\tecnofix\client\src\main\java\com\duocuc\client\exception\BusinessRuleException.java
+C:\Users\loloc\Desktop\tecnofix\client\src\main\java\com\duocuc\client\exception\DuplicateResourceException.java
+C:\Users\loloc\Desktop\tecnofix\client\src\main\java\com\duocuc\client\exception\GlobalExceptionHandler.java
+C:\Users\loloc\Desktop\tecnofix\client\src\main\java\com\duocuc\client\exception\ResourceNotFoundException.java
+C:\Users\loloc\Desktop\tecnofix\client\src\main\java\com\duocuc\client\repository\ClientRepository.java
+C:\Users\loloc\Desktop\tecnofix\client\src\main\java\com\duocuc\client\service\ClientService.java
+C:\Users\loloc\Desktop\tecnofix\client\src\main\java\com\duocuc\client\service\impl\ClientServiceImpl.java

@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="es"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>PartController.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">part</a> &gt; <a href="index.source.html" class="el_package">com.duocuc.part.controller</a> &gt; <span class="el_source">PartController.java</span></div><h1>PartController.java</h1><pre class="source lang-java linenums">package com.duocuc.part.controller;
+
+import com.duocuc.part.dto.PartRequest;
+import com.duocuc.part.dto.PartResponse;
+import com.duocuc.part.dto.StockAdjustmentRequest;
+import com.duocuc.part.service.PartService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import java.util.List;
+
+@RestController
+@RequestMapping(&quot;/parts&quot;)
+@Tag(name = &quot;Parts&quot;, description = &quot;Management of TecnoFix parts inventory&quot;)
+public class PartController {
+
+    private final PartService partService;
+
+<span class="fc" id="L33">    public PartController(PartService partService) {</span>
+<span class="fc" id="L34">        this.partService = partService;</span>
+<span class="fc" id="L35">    }</span>
+
+    @Operation(summary = &quot;Create a part&quot;)
+    @ApiResponses({
+            @ApiResponse(responseCode = &quot;201&quot;, description = &quot;Part created&quot;),
+            @ApiResponse(responseCode = &quot;400&quot;, description = &quot;Invalid data&quot;),
+            @ApiResponse(responseCode = &quot;422&quot;, description = &quot;Negative stock or supplier does not exist&quot;),
+            @ApiResponse(responseCode = &quot;502&quot;, description = &quot;Supplier service unavailable&quot;)
+    })
+    @PostMapping
+    public ResponseEntity&lt;PartResponse&gt; create(@RequestBody @Valid PartRequest request) {
+<span class="fc" id="L46">        PartResponse response = partService.save(request);</span>
+<span class="fc" id="L47">        return ResponseEntity.status(HttpStatus.CREATED).body(response);</span>
+    }
+
+    @Operation(summary = &quot;List all parts&quot;)
+    @ApiResponse(responseCode = &quot;200&quot;, description = &quot;List of parts&quot;)
+    @GetMapping
+    public ResponseEntity&lt;List&lt;PartResponse&gt;&gt; findAll() {
+<span class="fc" id="L54">        return ResponseEntity.ok(partService.findAll());</span>
+    }
+
+    @Operation(summary = &quot;Get a part by id&quot;)
+    @ApiResponses({
+            @ApiResponse(responseCode = &quot;200&quot;, description = &quot;Part found&quot;),
+            @ApiResponse(responseCode = &quot;404&quot;, description = &quot;Part does not exist&quot;)
+    })
+    @GetMapping(&quot;/{id}&quot;)
+    public ResponseEntity&lt;PartResponse&gt; findById(@PathVariable Long id) {
+<span class="fc" id="L64">        return ResponseEntity.ok(partService.findById(id));</span>
+    }
+
+    @Operation(summary = &quot;Update a part&quot;)
+    @ApiResponses({
+            @ApiResponse(responseCode = &quot;200&quot;, description = &quot;Part updated&quot;),
+            @ApiResponse(responseCode = &quot;404&quot;, description = &quot;Part does not exist&quot;),
+            @ApiResponse(responseCode = &quot;422&quot;, description = &quot;Part inactive, negative stock or supplier does not exist&quot;)
+    })
+    @PutMapping(&quot;/{id}&quot;)
+    public ResponseEntity&lt;PartResponse&gt; update(@PathVariable Long id, @RequestBody @Valid PartRequest request) {
+<span class="nc" id="L75">        return ResponseEntity.ok(partService.update(id, request));</span>
+    }
+
+    @Operation(summary = &quot;Subtract stock from a part&quot;)
+    @ApiResponses({
+            @ApiResponse(responseCode = &quot;200&quot;, description = &quot;Stock subtracted&quot;),
+            @ApiResponse(responseCode = &quot;404&quot;, description = &quot;Part does not exist&quot;),
+            @ApiResponse(responseCode = &quot;422&quot;, description = &quot;Insufficient stock&quot;)
+    })
+    @PatchMapping(&quot;/{id}/stock&quot;)
+    public ResponseEntity&lt;PartResponse&gt; subtractStock(@PathVariable Long id, @RequestBody @Valid StockAdjustmentRequest request) {
+<span class="fc" id="L86">        return ResponseEntity.ok(partService.subtractStock(id, request));</span>
+    }
+
+    @Operation(summary = &quot;Deactivate a part (logical delete)&quot;)
+    @ApiResponses({
+            @ApiResponse(responseCode = &quot;204&quot;, description = &quot;Part deactivated&quot;),
+            @ApiResponse(responseCode = &quot;404&quot;, description = &quot;Part does not exist&quot;)
+    })
+    @DeleteMapping(&quot;/{id}&quot;)
+    public ResponseEntity&lt;Void&gt; deactivate(@PathVariable Long id) {
+<span class="fc" id="L96">        partService.deactivate(id);</span>
+<span class="fc" id="L97">        return ResponseEntity.noContent().build();</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.15.202606040825</span></div></body></html>

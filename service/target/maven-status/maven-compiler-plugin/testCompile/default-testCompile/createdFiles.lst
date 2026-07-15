@@ -1,0 +1,6 @@
+com\duocuc\service\repository\CategoryRepositoryTest.class
+com\duocuc\service\service\CategoryServiceImplTest.class
+com\duocuc\service\controller\CategoryControllerTest.class
+com\duocuc\service\service\ServiceCatalogServiceImplTest.class
+com\duocuc\service\controller\ServiceControllerTest.class
+com\duocuc\service\repository\MaintenanceServiceRepositoryTest.class

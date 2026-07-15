@@ -1,0 +1,6 @@
+CREATE TABLE specialties (
+    id BIGSERIAL PRIMARY KEY,
+    name VARCHAR(60) NOT NULL UNIQUE,
+    description VARCHAR(200),
+    active BOOLEAN NOT NULL DEFAULT TRUE
+);

@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>CitaServiceImpl.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">ms-agenda</a> &gt; <a href="index.source.html" class="el_package">com.duocuc.msagenda.service.impl</a> &gt; <span class="el_source">CitaServiceImpl.java</span></div><h1>CitaServiceImpl.java</h1><pre class="source lang-java linenums">package com.duocuc.msagenda.service.impl;
+
+import com.duocuc.msagenda.dto.CitaRequest;
+import com.duocuc.msagenda.dto.CitaResponse;
+import com.duocuc.msagenda.entity.Cita;
+import com.duocuc.msagenda.exception.BusinessRuleException;
+import com.duocuc.msagenda.exception.DuplicateResourceException;
+import com.duocuc.msagenda.exception.ResourceNotFoundException;
+import com.duocuc.msagenda.repository.CitaRepository;
+import com.duocuc.msagenda.service.CitaService;
+import com.duocuc.msagenda.service.ClienteService;
+import com.duocuc.msagenda.service.TecnicoService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Service;
+
+import java.time.LocalDateTime;
+import java.util.List;
+
+@Service
+public class CitaServiceImpl implements CitaService {
+
+<span class="fc" id="L23">    private static final Logger log = LoggerFactory.getLogger(CitaServiceImpl.class);</span>
+
+    private final CitaRepository citaRepository;
+    private final ClienteService clienteService;
+    private final TecnicoService tecnicoService;
+
+<span class="fc" id="L29">    public CitaServiceImpl(CitaRepository citaRepository, ClienteService clienteService, TecnicoService tecnicoService) {</span>
+<span class="fc" id="L30">        this.citaRepository = citaRepository;</span>
+<span class="fc" id="L31">        this.clienteService = clienteService;</span>
+<span class="fc" id="L32">        this.tecnicoService = tecnicoService;</span>
+<span class="fc" id="L33">    }</span>
+
+    @Override
+    public CitaResponse save(CitaRequest request) {
+        // Regla de negocio: cliente y tecnico deben existir en sus respectivos microservicios
+<span class="fc bfc" id="L38" title="All 2 branches covered.">        if (!clienteService.existeCliente(request.clienteId())) {</span>
+<span class="fc" id="L39">            throw new BusinessRuleException(&quot;El cliente indicado no existe: &quot; + request.clienteId());</span>
+        }
+<span class="fc bfc" id="L41" title="All 2 branches covered.">        if (!tecnicoService.existeTecnico(request.tecnicoId())) {</span>
+<span class="fc" id="L42">            throw new BusinessRuleException(&quot;El técnico indicado no existe: &quot; + request.tecnicoId());</span>
+        }
+        // Regla de negocio: la fecha de la cita no puede ser pasada
+<span class="fc bfc" id="L45" title="All 2 branches covered.">        if (request.fechaHora().isBefore(LocalDateTime.now())) {</span>
+<span class="fc" id="L46">            throw new BusinessRuleException(&quot;La fecha y hora de la cita no puede ser pasada&quot;);</span>
+        }
+        // Regla de negocio: un tecnico no puede tener dos citas vigentes a la misma hora
+<span class="fc bfc" id="L49" title="All 2 branches covered.">        if (citaRepository.existsByTecnicoIdAndFechaHoraAndActivoTrue(request.tecnicoId(), request.fechaHora())) {</span>
+<span class="fc" id="L50">            throw new DuplicateResourceException(</span>
+<span class="fc" id="L51">                    &quot;El técnico ya tiene una cita agendada a esa hora: &quot; + request.fechaHora());</span>
+        }
+
+<span class="fc" id="L54">        Cita cita = new Cita();</span>
+<span class="fc" id="L55">        cita.setClienteId(request.clienteId());</span>
+<span class="fc" id="L56">        cita.setTecnicoId(request.tecnicoId());</span>
+<span class="fc" id="L57">        cita.setFechaHora(request.fechaHora());</span>
+<span class="fc" id="L58">        cita.setMotivo(request.motivo());</span>
+<span class="fc" id="L59">        Cita guardada = citaRepository.save(cita);</span>
+<span class="fc" id="L60">        log.info(&quot;Cita creada con id={} tecnicoId={} fechaHora={}&quot;, guardada.getId(), guardada.getTecnicoId(), guardada.getFechaHora());</span>
+<span class="fc" id="L61">        return toResponse(guardada);</span>
+    }
+
+    @Override
+    public List&lt;CitaResponse&gt; findAll() {
+<span class="nc" id="L66">        log.info(&quot;Listando todas las citas&quot;);</span>
+<span class="nc" id="L67">        return citaRepository.findAll().stream()</span>
+<span class="nc" id="L68">                .map(this::toResponse)</span>
+<span class="nc" id="L69">                .toList();</span>
+    }
+
+    @Override
+    public CitaResponse findById(Long id) {
+<span class="fc" id="L74">        Cita cita = citaRepository.findById(id)</span>
+<span class="pc" id="L75">                .orElseThrow(() -&gt; new ResourceNotFoundException(&quot;Cita no encontrada con id: &quot; + id));</span>
+<span class="nc" id="L76">        return toResponse(cita);</span>
+    }
+
+    @Override
+    public CitaResponse update(Long id, CitaRequest request) {
+<span class="fc" id="L81">        Cita cita = citaRepository.findById(id)</span>
+<span class="pc" id="L82">                .orElseThrow(() -&gt; new ResourceNotFoundException(&quot;Cita no encontrada con id: &quot; + id));</span>
+
+<span class="pc bpc" id="L84" title="1 of 2 branches missed.">        if (Boolean.FALSE.equals(cita.getActivo())) {</span>
+<span class="fc" id="L85">            throw new BusinessRuleException(&quot;No se puede modificar una cita cancelada (id: &quot; + id + &quot;)&quot;);</span>
+        }
+<span class="nc bnc" id="L87" title="All 2 branches missed.">        if (!clienteService.existeCliente(request.clienteId())) {</span>
+<span class="nc" id="L88">            throw new BusinessRuleException(&quot;El cliente indicado no existe: &quot; + request.clienteId());</span>
+        }
+<span class="nc bnc" id="L90" title="All 2 branches missed.">        if (!tecnicoService.existeTecnico(request.tecnicoId())) {</span>
+<span class="nc" id="L91">            throw new BusinessRuleException(&quot;El técnico indicado no existe: &quot; + request.tecnicoId());</span>
+        }
+<span class="nc bnc" id="L93" title="All 2 branches missed.">        if (request.fechaHora().isBefore(LocalDateTime.now())) {</span>
+<span class="nc" id="L94">            throw new BusinessRuleException(&quot;La fecha y hora de la cita no puede ser pasada&quot;);</span>
+        }
+<span class="nc bnc" id="L96" title="All 2 branches missed.">        if (citaRepository.existsByTecnicoIdAndFechaHoraAndActivoTrueAndIdNot(request.tecnicoId(), request.fechaHora(), id)) {</span>
+<span class="nc" id="L97">            throw new DuplicateResourceException(</span>
+<span class="nc" id="L98">                    &quot;El técnico ya tiene una cita agendada a esa hora: &quot; + request.fechaHora());</span>
+        }
+
+<span class="nc" id="L101">        cita.setClienteId(request.clienteId());</span>
+<span class="nc" id="L102">        cita.setTecnicoId(request.tecnicoId());</span>
+<span class="nc" id="L103">        cita.setFechaHora(request.fechaHora());</span>
+<span class="nc" id="L104">        cita.setMotivo(request.motivo());</span>
+<span class="nc" id="L105">        Cita actualizada = citaRepository.save(cita);</span>
+<span class="nc" id="L106">        log.info(&quot;Cita actualizada id={}&quot;, actualizada.getId());</span>
+<span class="nc" id="L107">        return toResponse(actualizada);</span>
+    }
+
+    @Override
+    public void cancelar(Long id) {
+<span class="fc" id="L112">        Cita cita = citaRepository.findById(id)</span>
+<span class="pc" id="L113">                .orElseThrow(() -&gt; new ResourceNotFoundException(&quot;Cita no encontrada con id: &quot; + id));</span>
+<span class="fc" id="L114">        cita.setActivo(false);</span>
+<span class="fc" id="L115">        citaRepository.save(cita);</span>
+<span class="fc" id="L116">        log.info(&quot;Cita cancelada id={}&quot;, id);</span>
+<span class="fc" id="L117">    }</span>
+
+    private CitaResponse toResponse(Cita c) {
+<span class="fc" id="L120">        return new CitaResponse(c.getId(), c.getClienteId(), c.getTecnicoId(), c.getFechaHora(), c.getMotivo(), c.getActivo());</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.15.202606040825</span></div></body></html>

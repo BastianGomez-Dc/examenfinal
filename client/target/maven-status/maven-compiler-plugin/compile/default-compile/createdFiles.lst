@@ -1,0 +1,13 @@
+com\duocuc\client\exception\ResourceNotFoundException.class
+com\duocuc\client\exception\BusinessRuleException.class
+com\duocuc\client\controller\ClientController.class
+com\duocuc\client\repository\ClientRepository.class
+com\duocuc\client\exception\DuplicateResourceException.class
+com\duocuc\client\exception\GlobalExceptionHandler.class
+com\duocuc\client\config\OpenApiConfig.class
+com\duocuc\client\ClientApplication.class
+com\duocuc\client\service\impl\ClientServiceImpl.class
+com\duocuc\client\service\ClientService.class
+com\duocuc\client\dto\ClientResponse.class
+com\duocuc\client\entity\Client.class
+com\duocuc\client\dto\ClientRequest.class

@@ -1,0 +1,16 @@
+GROUP,PACKAGE,CLASS,INSTRUCTION_MISSED,INSTRUCTION_COVERED,BRANCH_MISSED,BRANCH_COVERED,LINE_MISSED,LINE_COVERED,COMPLEXITY_MISSED,COMPLEXITY_COVERED,METHOD_MISSED,METHOD_COVERED
+invoice,com.duocuc.invoice.controller,InvoiceController,0,27,0,0,0,7,0,4,0,4
+invoice,com.duocuc.invoice.exception,ResourceNotFoundException,0,4,0,0,0,2,0,1,0,1
+invoice,com.duocuc.invoice.exception,BusinessRuleException,0,4,0,0,0,2,0,1,0,1
+invoice,com.duocuc.invoice.exception,DuplicateResourceException,0,4,0,0,0,2,0,1,0,1
+invoice,com.duocuc.invoice.exception,GlobalExceptionHandler,133,0,2,0,25,0,11,0,10,0
+invoice,com.duocuc.invoice.exception,RemoteServiceException,4,0,0,0,2,0,1,0,1,0
+invoice,com.duocuc.invoice.client.impl,OrderClientImpl,58,0,0,0,20,0,3,0,3,0
+invoice,com.duocuc.invoice.service.impl,InvoiceServiceImpl,19,125,0,4,5,22,1,9,1,7
+invoice,com.duocuc.invoice.service.impl,OrderServiceImpl,11,0,0,0,4,0,2,0,2,0
+invoice,com.duocuc.invoice.entity,Invoice,4,30,0,0,1,10,1,8,1,8
+invoice,com.duocuc.invoice,InvoiceApplication,5,3,0,0,2,1,1,1,1,1
+invoice,com.duocuc.invoice.client.dto,RemoteOrder,0,12,0,0,0,1,0,1,0,1
+invoice,com.duocuc.invoice.dto,InvoiceResponse,0,15,0,0,0,1,0,1,0,1
+invoice,com.duocuc.invoice.dto,InvoiceRequest,0,6,0,0,0,1,0,1,0,1
+invoice,com.duocuc.invoice.config,OpenApiConfig,17,0,0,0,5,0,2,0,2,0

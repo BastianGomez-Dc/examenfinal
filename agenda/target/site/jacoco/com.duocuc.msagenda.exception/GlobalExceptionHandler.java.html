@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>GlobalExceptionHandler.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">ms-agenda</a> &gt; <a href="index.source.html" class="el_package">com.duocuc.msagenda.exception</a> &gt; <span class="el_source">GlobalExceptionHandler.java</span></div><h1>GlobalExceptionHandler.java</h1><pre class="source lang-java linenums">package com.duocuc.msagenda.exception;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.MethodArgumentNotValidException;
+import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.RestControllerAdvice;
+
+import java.time.LocalDateTime;
+import java.util.HashMap;
+import java.util.Map;
+
+/**
+ * Manejo centralizado de errores para todo el microservicio.
+ * Cada handler retorna un JSON consistente con timestamp, status y mensaje.
+ */
+@RestControllerAdvice
+<span class="nc" id="L20">public class GlobalExceptionHandler {</span>
+
+<span class="nc" id="L22">    private static final Logger log = LoggerFactory.getLogger(GlobalExceptionHandler.class);</span>
+
+    @ExceptionHandler(ResourceNotFoundException.class)
+    public ResponseEntity&lt;Map&lt;String, Object&gt;&gt; handleNotFound(ResourceNotFoundException ex) {
+<span class="nc" id="L26">        log.warn(&quot;Recurso no encontrado: {}&quot;, ex.getMessage());</span>
+<span class="nc" id="L27">        return buildResponse(HttpStatus.NOT_FOUND, ex.getMessage(), null);</span>
+    }
+
+    @ExceptionHandler(DuplicateResourceException.class)
+    public ResponseEntity&lt;Map&lt;String, Object&gt;&gt; handleDuplicate(DuplicateResourceException ex) {
+<span class="nc" id="L32">        log.warn(&quot;Recurso duplicado: {}&quot;, ex.getMessage());</span>
+<span class="nc" id="L33">        return buildResponse(HttpStatus.CONFLICT, ex.getMessage(), null);</span>
+    }
+
+    @ExceptionHandler(BusinessRuleException.class)
+    public ResponseEntity&lt;Map&lt;String, Object&gt;&gt; handleBusinessRule(BusinessRuleException ex) {
+<span class="nc" id="L38">        log.warn(&quot;Regla de negocio violada: {}&quot;, ex.getMessage());</span>
+<span class="nc" id="L39">        return buildResponse(HttpStatus.UNPROCESSABLE_ENTITY, ex.getMessage(), null);</span>
+    }
+
+    @ExceptionHandler(RemoteServiceException.class)
+    public ResponseEntity&lt;Map&lt;String, Object&gt;&gt; handleRemoteService(RemoteServiceException ex) {
+<span class="nc" id="L44">        log.error(&quot;Error de comunicación con servicio remoto: {}&quot;, ex.getMessage());</span>
+<span class="nc" id="L45">        return buildResponse(HttpStatus.BAD_GATEWAY, ex.getMessage(), null);</span>
+    }
+
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    public ResponseEntity&lt;Map&lt;String, Object&gt;&gt; handleValidation(MethodArgumentNotValidException ex) {
+<span class="nc" id="L50">        Map&lt;String, String&gt; errores = new HashMap&lt;&gt;();</span>
+<span class="nc" id="L51">        ex.getBindingResult().getFieldErrors()</span>
+<span class="nc" id="L52">                .forEach(e -&gt; errores.put(e.getField(), e.getDefaultMessage()));</span>
+<span class="nc" id="L53">        log.warn(&quot;Validación fallida: {}&quot;, errores);</span>
+<span class="nc" id="L54">        return buildResponse(HttpStatus.BAD_REQUEST, &quot;Datos de entrada inválidos&quot;, errores);</span>
+    }
+
+    @ExceptionHandler(Exception.class)
+    public ResponseEntity&lt;Map&lt;String, Object&gt;&gt; handleGeneric(Exception ex) {
+<span class="nc" id="L59">        log.error(&quot;Error no controlado&quot;, ex);</span>
+<span class="nc" id="L60">        return buildResponse(HttpStatus.INTERNAL_SERVER_ERROR, &quot;Error interno del servidor&quot;, null);</span>
+    }
+
+    private ResponseEntity&lt;Map&lt;String, Object&gt;&gt; buildResponse(HttpStatus status, String message, Map&lt;String, String&gt; detalles) {
+<span class="nc" id="L64">        Map&lt;String, Object&gt; body = new HashMap&lt;&gt;();</span>
+<span class="nc" id="L65">        body.put(&quot;timestamp&quot;, LocalDateTime.now().toString());</span>
+<span class="nc" id="L66">        body.put(&quot;status&quot;, status.value());</span>
+<span class="nc" id="L67">        body.put(&quot;error&quot;, status.getReasonPhrase());</span>
+<span class="nc" id="L68">        body.put(&quot;message&quot;, message);</span>
+<span class="nc bnc" id="L69" title="All 2 branches missed.">        if (detalles != null) {</span>
+<span class="nc" id="L70">            body.put(&quot;detalles&quot;, detalles);</span>
+        }
+<span class="nc" id="L72">        return ResponseEntity.status(status).body(body);</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.15.202606040825</span></div></body></html>

@@ -1,0 +1,25 @@
+spring:
+  application:
+    name: bff
+
+server:
+  port: 8081
+
+auth:
+  service:
+    base-url: ${MS_AUTH_URL:http://localhost:8090}
+
+security:
+  jwt:
+    secret: "${JWT_SECRET:$&miSercreto.SuperSeguro!1988}"
+    expiration-hours: ${JWT_EXPIRATION_HOURS:24}
+
+springdoc:
+  api-docs:
+    path: /api-docs
+  swagger-ui:
+    path: /swagger-ui.html
+
+logging:
+  level:
+    com.duocuc.bff: INFO

@@ -1,0 +1,12 @@
+GROUP,PACKAGE,CLASS,INSTRUCTION_MISSED,INSTRUCTION_COVERED,BRANCH_MISSED,BRANCH_COVERED,LINE_MISSED,LINE_COVERED,COMPLEXITY_MISSED,COMPLEXITY_COVERED,METHOD_MISSED,METHOD_COVERED
+supplier,com.duocuc.supplier.service.impl,SupplierServiceImpl,25,189,3,5,1,42,4,11,2,9
+supplier,com.duocuc.supplier,SupplierApplication,5,3,0,0,2,1,1,1,1,1
+supplier,com.duocuc.supplier.controller,SupplierController,7,34,0,0,1,9,1,5,1,5
+supplier,com.duocuc.supplier.dto,SupplierResponse,0,24,0,0,0,1,0,1,0,1
+supplier,com.duocuc.supplier.dto,SupplierRequest,0,15,0,0,0,1,0,1,0,1
+supplier,com.duocuc.supplier.exception,ResourceNotFoundException,0,4,0,0,0,2,0,1,0,1
+supplier,com.duocuc.supplier.exception,DuplicateResourceException,0,4,0,0,0,2,0,1,0,1
+supplier,com.duocuc.supplier.exception,BusinessRuleException,0,4,0,0,0,2,0,1,0,1
+supplier,com.duocuc.supplier.exception,GlobalExceptionHandler,121,0,2,0,23,0,10,0,9,0
+supplier,com.duocuc.supplier.config,OpenApiConfig,17,0,0,0,5,0,2,0,2,0
+supplier,com.duocuc.supplier.entity,Supplier,4,55,0,0,1,18,1,14,1,14

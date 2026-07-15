@@ -1,0 +1,3 @@
+com\duocuc\client\controller\ClientControllerTest.class
+com\duocuc\client\service\ClientServiceImplTest.class
+com\duocuc\client\repository\ClientRepositoryTest.class

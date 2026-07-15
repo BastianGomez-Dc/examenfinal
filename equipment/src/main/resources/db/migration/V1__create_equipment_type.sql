@@ -1,0 +1,6 @@
+CREATE TABLE equipment_types (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(60) NOT NULL UNIQUE,
+    description VARCHAR(200),
+    active BOOLEAN NOT NULL DEFAULT TRUE
+);

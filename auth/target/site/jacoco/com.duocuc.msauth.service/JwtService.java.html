@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>JwtService.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">ms-auth</a> &gt; <a href="index.source.html" class="el_package">com.duocuc.msauth.service</a> &gt; <span class="el_source">JwtService.java</span></div><h1>JwtService.java</h1><pre class="source lang-java linenums">package com.duocuc.msauth.service;
+
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.security.Keys;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Service;
+
+import javax.crypto.SecretKey;
+import java.nio.charset.StandardCharsets;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+import java.time.Duration;
+import java.time.Instant;
+import java.util.Date;
+
+@Service
+public class JwtService {
+
+    private final SecretKey signingKey;
+    private final long expirationHours;
+
+    public JwtService(
+            @Value(&quot;${security.jwt.secret}&quot;) String secret,
+            @Value(&quot;${security.jwt.expiration-hours}&quot;) long expirationHours
+<span class="nc" id="L25">    ) {</span>
+<span class="nc" id="L26">        this.signingKey = Keys.hmacShaKeyFor(sha256(secret));</span>
+<span class="nc" id="L27">        this.expirationHours = expirationHours;</span>
+<span class="nc" id="L28">    }</span>
+
+    private byte[] sha256(String value) {
+        try {
+<span class="nc" id="L32">            MessageDigest digest = MessageDigest.getInstance(&quot;SHA-256&quot;);</span>
+<span class="nc" id="L33">            return digest.digest(value.getBytes(StandardCharsets.UTF_8));</span>
+<span class="nc" id="L34">        } catch (NoSuchAlgorithmException exception) {</span>
+<span class="nc" id="L35">            throw new IllegalStateException(&quot;No fue posible inicializar SHA-256&quot;, exception);</span>
+        }
+    }
+
+    public String generateToken(String email) {
+<span class="nc" id="L40">        Instant now = Instant.now();</span>
+<span class="nc" id="L41">        Instant exp = now.plus(Duration.ofHours(expirationHours));</span>
+
+<span class="nc" id="L43">        return Jwts.builder()</span>
+<span class="nc" id="L44">                .subject(email)</span>
+<span class="nc" id="L45">                .issuedAt(Date.from(now))</span>
+<span class="nc" id="L46">                .expiration(Date.from(exp))</span>
+<span class="nc" id="L47">                .signWith(signingKey)</span>
+<span class="nc" id="L48">                .compact();</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.15.202606040825</span></div></body></html>

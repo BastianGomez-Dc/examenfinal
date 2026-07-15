@@ -1,0 +1,3 @@
+/app/src/test/java/com/duocuc/msauth/controller/AuthControllerTest.java
+/app/src/test/java/com/duocuc/msauth/repository/UserRepositoryTest.java
+/app/src/test/java/com/duocuc/msauth/service/AuthServiceTest.java

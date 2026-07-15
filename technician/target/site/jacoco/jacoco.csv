@@ -1,0 +1,17 @@
+GROUP,PACKAGE,CLASS,INSTRUCTION_MISSED,INSTRUCTION_COVERED,BRANCH_MISSED,BRANCH_COVERED,LINE_MISSED,LINE_COVERED,COMPLEXITY_MISSED,COMPLEXITY_COVERED,METHOD_MISSED,METHOD_COVERED
+technician,com.duocuc.technician.service.impl,TechnicianServiceImpl,97,156,5,3,16,33,7,10,4,9
+technician,com.duocuc.technician.service.impl,SpecialtyServiceImpl,61,131,5,3,9,29,5,10,2,9
+technician,com.duocuc.technician.exception,ResourceNotFoundException,0,4,0,0,0,2,0,1,0,1
+technician,com.duocuc.technician.exception,BusinessRuleException,0,4,0,0,0,2,0,1,0,1
+technician,com.duocuc.technician.exception,GlobalExceptionHandler,121,0,2,0,23,0,10,0,9,0
+technician,com.duocuc.technician.exception,DuplicateResourceException,0,4,0,0,0,2,0,1,0,1
+technician,com.duocuc.technician.dto,SpecialtyResponse,0,15,0,0,0,1,0,1,0,1
+technician,com.duocuc.technician.dto,SpecialtyRequest,0,9,0,0,0,1,0,1,0,1
+technician,com.duocuc.technician.dto,TechnicianRequest,0,15,0,0,0,1,0,1,0,1
+technician,com.duocuc.technician.dto,TechnicianResponse,0,27,0,0,0,1,0,1,0,1
+technician,com.duocuc.technician.entity,Specialty,0,35,0,0,0,11,0,9,0,9
+technician,com.duocuc.technician.entity,Technician,4,55,0,0,1,18,1,14,1,14
+technician,com.duocuc.technician.controller,TechnicianController,7,34,0,0,1,9,1,5,1,5
+technician,com.duocuc.technician.controller,SpecialtyController,7,34,0,0,1,9,1,5,1,5
+technician,com.duocuc.technician,TechnicianApplication,5,3,0,0,2,1,1,1,1,1
+technician,com.duocuc.technician.config,OpenApiConfig,17,0,0,0,5,0,2,0,2,0

@@ -1,0 +1,85 @@
+### List specialties
+GET http://localhost:8084/specialties
+
+### Create specialty
+POST http://localhost:8084/specialties
+Content-Type: application/json
+
+{
+  "name": "Batteries",
+  "description": "Battery diagnostics and replacement"
+}
+
+### Create specialty with duplicate name (should return 409)
+POST http://localhost:8084/specialties
+Content-Type: application/json
+
+{
+  "name": "Hardware"
+}
+
+### Create technician
+POST http://localhost:8084/technicians
+Content-Type: application/json
+
+{
+  "name": "Pedro Perez",
+  "email": "pedro.perez@tecnofix.cl",
+  "phone": "+56966666666",
+  "specialtyId": 1
+}
+
+### Create technician with duplicate email (should return 409)
+POST http://localhost:8084/technicians
+Content-Type: application/json
+
+{
+  "name": "Another Pedro",
+  "email": "pedro.perez@tecnofix.cl",
+  "specialtyId": 1
+}
+
+### Create technician with a non-existent specialty (should return 422)
+POST http://localhost:8084/technicians
+Content-Type: application/json
+
+{
+  "name": "Another Technician",
+  "email": "another.technician@tecnofix.cl",
+  "specialtyId": 999
+}
+
+### Create invalid technician (should return 400)
+POST http://localhost:8084/technicians
+Content-Type: application/json
+
+{
+  "name": "",
+  "email": "not-an-email"
+}
+
+### List technicians
+GET http://localhost:8084/technicians
+
+### Get technician by id
+GET http://localhost:8084/technicians/1
+
+### Get non-existent technician (should return 404)
+GET http://localhost:8084/technicians/999
+
+### Update technician
+PUT http://localhost:8084/technicians/1
+Content-Type: application/json
+
+{
+  "name": "Javier Soto Updated",
+  "email": "javier.soto@tecnofix.cl",
+  "phone": "+56911112222",
+  "specialtyId": 2
+}
+
+### Deactivate technician (should return 204)
+DELETE http://localhost:8084/technicians/5
+
+### Swagger UI
+GET http://localhost:8084/swagger-ui.html

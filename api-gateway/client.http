@@ -1,0 +1,47 @@
+### Listar clientes a través del gateway
+GET http://localhost:8080/api/clientes
+
+### Obtener cliente por id a través del gateway
+GET http://localhost:8080/api/clientes/1
+
+### Listar equipos a través del gateway
+GET http://localhost:8080/api/equipos
+
+### Listar tipos de equipo a través del gateway
+GET http://localhost:8080/api/tipos-equipo
+
+### Listar técnicos a través del gateway
+GET http://localhost:8080/api/tecnicos
+
+### Listar servicios a través del gateway
+GET http://localhost:8080/api/servicios
+
+### Listar proveedores a través del gateway
+GET http://localhost:8080/api/proveedores
+
+### Listar repuestos a través del gateway
+GET http://localhost:8080/api/repuestos
+
+### Listar órdenes a través del gateway
+GET http://localhost:8080/api/ordenes
+
+### Listar facturas a través del gateway
+GET http://localhost:8080/api/facturas
+
+### Listar citas a través del gateway
+GET http://localhost:8080/api/citas
+
+### Login a través del gateway (gateway -> bff -> ms-auth)
+POST http://localhost:8080/api/auth/login
+Content-Type: application/json
+
+{
+  "email": "user1@mail.cl",
+  "password": "abcd.1234"
+}
+
+### Ver las rutas configuradas del gateway (actuator)
+GET http://localhost:8080/actuator/gateway/routes
+
+### Ver el estado de salud del gateway (actuator)
+GET http://localhost:8080/actuator/health

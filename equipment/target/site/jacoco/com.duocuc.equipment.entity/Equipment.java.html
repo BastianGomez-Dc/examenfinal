@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="es"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Equipment.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">equipment</a> &gt; <a href="index.source.html" class="el_package">com.duocuc.equipment.entity</a> &gt; <span class="el_source">Equipment.java</span></div><h1>Equipment.java</h1><pre class="source lang-java linenums">package com.duocuc.equipment.entity;
+
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Table;
+
+import java.time.LocalDate;
+
+@Entity
+@Table(name = &quot;equipment&quot;)
+public class Equipment {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    @Column(name = &quot;serial_number&quot;, nullable = false, unique = true, length = 60)
+    private String serialNumber;
+
+    @Column(nullable = false, length = 60)
+    private String brand;
+
+    @Column(length = 60)
+    private String model;
+
+    // Remote reference to the client service. Not a local FK: validated via RestClient.
+    @Column(name = &quot;client_id&quot;, nullable = false)
+    private Long clientId;
+
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = &quot;equipment_type_id&quot;, nullable = false)
+    private EquipmentType equipmentType;
+
+<span class="fc" id="L40">    @Column(nullable = false)</span>
+<span class="fc" id="L41">    private Boolean active = true;</span>
+
+<span class="fc" id="L43">    @Column(name = &quot;intake_date&quot;, nullable = false)</span>
+<span class="fc" id="L44">    private LocalDate intakeDate = LocalDate.now();</span>
+
+<span class="fc" id="L46">    public Equipment() {}</span>
+
+<span class="fc" id="L48">    public Long getId() { return id; }</span>
+<span class="fc" id="L49">    public void setId(Long id) { this.id = id; }</span>
+
+<span class="fc" id="L51">    public String getSerialNumber() { return serialNumber; }</span>
+<span class="fc" id="L52">    public void setSerialNumber(String serialNumber) { this.serialNumber = serialNumber; }</span>
+
+<span class="fc" id="L54">    public String getBrand() { return brand; }</span>
+<span class="fc" id="L55">    public void setBrand(String brand) { this.brand = brand; }</span>
+
+<span class="fc" id="L57">    public String getModel() { return model; }</span>
+<span class="fc" id="L58">    public void setModel(String model) { this.model = model; }</span>
+
+<span class="fc" id="L60">    public Long getClientId() { return clientId; }</span>
+<span class="fc" id="L61">    public void setClientId(Long clientId) { this.clientId = clientId; }</span>
+
+<span class="fc" id="L63">    public EquipmentType getEquipmentType() { return equipmentType; }</span>
+<span class="fc" id="L64">    public void setEquipmentType(EquipmentType equipmentType) { this.equipmentType = equipmentType; }</span>
+
+<span class="fc" id="L66">    public Boolean getActive() { return active; }</span>
+<span class="fc" id="L67">    public void setActive(Boolean active) { this.active = active; }</span>
+
+<span class="fc" id="L69">    public LocalDate getIntakeDate() { return intakeDate; }</span>
+<span class="nc" id="L70">    public void setIntakeDate(LocalDate intakeDate) { this.intakeDate = intakeDate; }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.15.202606040825</span></div></body></html>

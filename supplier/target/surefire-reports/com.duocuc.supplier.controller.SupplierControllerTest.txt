@@ -1,0 +1,4 @@
+-------------------------------------------------------------------------------
+Test set: com.duocuc.supplier.controller.SupplierControllerTest
+-------------------------------------------------------------------------------
+Tests run: 4, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.996 s -- in com.duocuc.supplier.controller.SupplierControllerTest

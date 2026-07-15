@@ -1,0 +1,100 @@
+### List equipment types
+GET http://localhost:8083/equipment-types
+
+### Create equipment type
+POST http://localhost:8083/equipment-types
+Content-Type: application/json
+
+{
+  "name": "Console",
+  "description": "Gaming console"
+}
+
+### Create equipment type with duplicate name (should return 409)
+POST http://localhost:8083/equipment-types
+Content-Type: application/json
+
+{
+  "name": "Laptop"
+}
+
+### Create equipment (requires an existing clientId and equipmentTypeId)
+POST http://localhost:8083/equipment
+Content-Type: application/json
+
+{
+  "serialNumber": "SN-9999-XX",
+  "brand": "Asus",
+  "model": "ROG Strix",
+  "clientId": 1,
+  "equipmentTypeId": 1
+}
+
+### Create equipment with duplicate serial number (should return 409)
+POST http://localhost:8083/equipment
+Content-Type: application/json
+
+{
+  "serialNumber": "SN-0001-NB",
+  "brand": "Asus",
+  "clientId": 1,
+  "equipmentTypeId": 1
+}
+
+### Create equipment with a non-existent client (should return 422)
+POST http://localhost:8083/equipment
+Content-Type: application/json
+
+{
+  "serialNumber": "SN-8888-XX",
+  "brand": "Asus",
+  "clientId": 99999,
+  "equipmentTypeId": 1
+}
+
+### Create equipment with a non-existent equipment type (should return 422)
+POST http://localhost:8083/equipment
+Content-Type: application/json
+
+{
+  "serialNumber": "SN-7777-XX",
+  "brand": "Asus",
+  "clientId": 1,
+  "equipmentTypeId": 99999
+}
+
+### Create invalid equipment (should return 400)
+POST http://localhost:8083/equipment
+Content-Type: application/json
+
+{
+  "serialNumber": "",
+  "brand": ""
+}
+
+### List equipment
+GET http://localhost:8083/equipment
+
+### Get equipment by id
+GET http://localhost:8083/equipment/1
+
+### Get non-existent equipment (should return 404)
+GET http://localhost:8083/equipment/999
+
+### Update equipment
+PUT http://localhost:8083/equipment/1
+Content-Type: application/json
+
+{
+  "serialNumber": "SN-0001-NB",
+  "brand": "Lenovo",
+  "model": "ThinkPad T14 Gen 3",
+  "clientId": 1,
+  "equipmentTypeId": 1
+}
+
+### Deactivate equipment (should return 204)
+DELETE http://localhost:8083/equipment/5
+
+### Swagger UI
+GET http://localhost:8083/swagger-ui.html

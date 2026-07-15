@@ -1,0 +1,145 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="es"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>OrderServiceImpl.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">order</a> &gt; <a href="index.source.html" class="el_package">com.duocuc.order.service.impl</a> &gt; <span class="el_source">OrderServiceImpl.java</span></div><h1>OrderServiceImpl.java</h1><pre class="source lang-java linenums">package com.duocuc.order.service.impl;
+
+import com.duocuc.order.client.dto.MaintenanceServiceSummary;
+import com.duocuc.order.dto.OrderItemRequest;
+import com.duocuc.order.dto.OrderItemResponse;
+import com.duocuc.order.dto.OrderRequest;
+import com.duocuc.order.dto.OrderResponse;
+import com.duocuc.order.dto.StatusUpdateRequest;
+import com.duocuc.order.entity.Order;
+import com.duocuc.order.entity.OrderItem;
+import com.duocuc.order.entity.OrderStatus;
+import com.duocuc.order.exception.BusinessRuleException;
+import com.duocuc.order.exception.ResourceNotFoundException;
+import com.duocuc.order.repository.OrderRepository;
+import com.duocuc.order.service.ClientService;
+import com.duocuc.order.service.EquipmentService;
+import com.duocuc.order.service.OrderService;
+import com.duocuc.order.service.ServiceCatalogService;
+import com.duocuc.order.service.TechnicianService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Service;
+
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
+
+@Service
+public class OrderServiceImpl implements OrderService {
+
+<span class="fc" id="L31">    private static final Logger log = LoggerFactory.getLogger(OrderServiceImpl.class);</span>
+
+    private final OrderRepository orderRepository;
+    private final ClientService clientService;
+    private final EquipmentService equipmentService;
+    private final TechnicianService technicianService;
+    private final ServiceCatalogService serviceCatalogService;
+
+    public OrderServiceImpl(OrderRepository orderRepository, ClientService clientService,
+                             EquipmentService equipmentService, TechnicianService technicianService,
+<span class="fc" id="L41">                             ServiceCatalogService serviceCatalogService) {</span>
+<span class="fc" id="L42">        this.orderRepository = orderRepository;</span>
+<span class="fc" id="L43">        this.clientService = clientService;</span>
+<span class="fc" id="L44">        this.equipmentService = equipmentService;</span>
+<span class="fc" id="L45">        this.technicianService = technicianService;</span>
+<span class="fc" id="L46">        this.serviceCatalogService = serviceCatalogService;</span>
+<span class="fc" id="L47">    }</span>
+
+    @Override
+    public OrderResponse save(OrderRequest request) {
+        // Business rule: client, equipment and technician must exist in their respective microservices
+<span class="fc bfc" id="L52" title="All 2 branches covered.">        if (!clientService.existsClient(request.clientId())) {</span>
+<span class="fc" id="L53">            throw new BusinessRuleException(&quot;The specified client does not exist: &quot; + request.clientId());</span>
+        }
+<span class="fc bfc" id="L55" title="All 2 branches covered.">        if (!equipmentService.existsEquipment(request.equipmentId())) {</span>
+<span class="fc" id="L56">            throw new BusinessRuleException(&quot;The specified equipment does not exist: &quot; + request.equipmentId());</span>
+        }
+<span class="fc bfc" id="L58" title="All 2 branches covered.">        if (!technicianService.existsTechnician(request.technicianId())) {</span>
+<span class="fc" id="L59">            throw new BusinessRuleException(&quot;The specified technician does not exist: &quot; + request.technicianId());</span>
+        }
+
+<span class="fc" id="L62">        Order order = new Order();</span>
+<span class="fc" id="L63">        order.setClientId(request.clientId());</span>
+<span class="fc" id="L64">        order.setEquipmentId(request.equipmentId());</span>
+<span class="fc" id="L65">        order.setTechnicianId(request.technicianId());</span>
+<span class="fc" id="L66">        order.setStatus(OrderStatus.RECEIVED);</span>
+
+<span class="fc" id="L68">        List&lt;OrderItem&gt; items = new ArrayList&lt;&gt;();</span>
+<span class="fc" id="L69">        BigDecimal total = BigDecimal.ZERO;</span>
+<span class="fc bfc" id="L70" title="All 2 branches covered.">        for (OrderItemRequest itemRequest : request.items()) {</span>
+            // Business rule: the service must exist and its price is copied from the service catalog
+<span class="fc" id="L72">            MaintenanceServiceSummary service = serviceCatalogService.findService(itemRequest.serviceId())</span>
+<span class="fc" id="L73">                    .orElseThrow(() -&gt; new BusinessRuleException(&quot;The specified service does not exist: &quot; + itemRequest.serviceId()));</span>
+
+<span class="fc" id="L75">            OrderItem item = new OrderItem();</span>
+<span class="fc" id="L76">            item.setOrder(order);</span>
+<span class="fc" id="L77">            item.setServiceId(service.id());</span>
+<span class="fc" id="L78">            item.setServiceName(service.name());</span>
+<span class="fc" id="L79">            item.setUnitPrice(service.price());</span>
+<span class="fc" id="L80">            item.setQuantity(itemRequest.quantity());</span>
+<span class="fc" id="L81">            items.add(item);</span>
+
+<span class="fc" id="L83">            total = total.add(service.price().multiply(BigDecimal.valueOf(itemRequest.quantity())));</span>
+<span class="fc" id="L84">        }</span>
+<span class="fc" id="L85">        order.setItems(items);</span>
+<span class="fc" id="L86">        order.setTotal(total);</span>
+
+<span class="fc" id="L88">        Order saved = orderRepository.save(order);</span>
+<span class="fc" id="L89">        log.info(&quot;Order created with id={} total={}&quot;, saved.getId(), saved.getTotal());</span>
+<span class="fc" id="L90">        return toResponse(saved);</span>
+    }
+
+    @Override
+    public List&lt;OrderResponse&gt; findAll() {
+<span class="nc" id="L95">        log.info(&quot;Listing all orders&quot;);</span>
+<span class="nc" id="L96">        return orderRepository.findAll().stream()</span>
+<span class="nc" id="L97">                .map(this::toResponse)</span>
+<span class="nc" id="L98">                .toList();</span>
+    }
+
+    @Override
+    public OrderResponse findById(Long id) {
+<span class="fc" id="L103">        Order order = orderRepository.findById(id)</span>
+<span class="pc" id="L104">                .orElseThrow(() -&gt; new ResourceNotFoundException(&quot;Order not found with id: &quot; + id));</span>
+<span class="nc" id="L105">        return toResponse(order);</span>
+    }
+
+    @Override
+    public OrderResponse changeStatus(Long id, StatusUpdateRequest request) {
+<span class="fc" id="L110">        Order order = orderRepository.findById(id)</span>
+<span class="pc" id="L111">                .orElseThrow(() -&gt; new ResourceNotFoundException(&quot;Order not found with id: &quot; + id));</span>
+
+        // Business rule: only sequential transitions are allowed RECEIVED -&gt; IN_REPAIR -&gt; READY -&gt; DELIVERED
+<span class="fc bfc" id="L114" title="All 2 branches covered.">        if (!isValidTransition(order.getStatus(), request.newStatus())) {</span>
+<span class="fc" id="L115">            throw new BusinessRuleException(</span>
+<span class="fc" id="L116">                    &quot;Invalid status transition: from &quot; + order.getStatus() + &quot; to &quot; + request.newStatus());</span>
+        }
+<span class="fc" id="L118">        order.setStatus(request.newStatus());</span>
+<span class="fc" id="L119">        Order updated = orderRepository.save(order);</span>
+<span class="fc" id="L120">        log.info(&quot;Order id={} changed status to {}&quot;, id, updated.getStatus());</span>
+<span class="fc" id="L121">        return toResponse(updated);</span>
+    }
+
+    private boolean isValidTransition(OrderStatus current, OrderStatus next) {
+<span class="pc bpc" id="L125" title="2 of 4 branches missed.">        return switch (current) {</span>
+<span class="fc bfc" id="L126" title="All 2 branches covered.">            case RECEIVED -&gt; next == OrderStatus.IN_REPAIR;</span>
+<span class="nc bnc" id="L127" title="All 2 branches missed.">            case IN_REPAIR -&gt; next == OrderStatus.READY;</span>
+<span class="nc bnc" id="L128" title="All 2 branches missed.">            case READY -&gt; next == OrderStatus.DELIVERED;</span>
+<span class="fc" id="L129">            case DELIVERED -&gt; false;</span>
+        };
+    }
+
+    private OrderResponse toResponse(Order o) {
+<span class="fc" id="L134">        List&lt;OrderItemResponse&gt; items = o.getItems().stream()</span>
+<span class="fc" id="L135">                .map(i -&gt; new OrderItemResponse(</span>
+<span class="fc" id="L136">                        i.getServiceId(), i.getServiceName(), i.getUnitPrice(), i.getQuantity(),</span>
+<span class="fc" id="L137">                        i.getUnitPrice().multiply(BigDecimal.valueOf(i.getQuantity()))))</span>
+<span class="fc" id="L138">                .toList();</span>
+<span class="fc" id="L139">        return new OrderResponse(</span>
+<span class="fc" id="L140">                o.getId(), o.getClientId(), o.getEquipmentId(), o.getTechnicianId(),</span>
+<span class="fc" id="L141">                o.getStatus(), o.getTotal(), o.getCreatedDate(), items</span>
+        );
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.15.202606040825</span></div></body></html>

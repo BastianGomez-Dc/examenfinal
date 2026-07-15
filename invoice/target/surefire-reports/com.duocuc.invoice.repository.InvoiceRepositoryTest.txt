@@ -1,0 +1,4 @@
+-------------------------------------------------------------------------------
+Test set: com.duocuc.invoice.repository.InvoiceRepositoryTest
+-------------------------------------------------------------------------------
+Tests run: 3, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 4.799 s -- in com.duocuc.invoice.repository.InvoiceRepositoryTest

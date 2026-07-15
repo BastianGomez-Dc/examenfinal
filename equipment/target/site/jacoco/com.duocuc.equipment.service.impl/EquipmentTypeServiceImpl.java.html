@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="es"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>EquipmentTypeServiceImpl.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">equipment</a> &gt; <a href="index.source.html" class="el_package">com.duocuc.equipment.service.impl</a> &gt; <span class="el_source">EquipmentTypeServiceImpl.java</span></div><h1>EquipmentTypeServiceImpl.java</h1><pre class="source lang-java linenums">package com.duocuc.equipment.service.impl;
+
+import com.duocuc.equipment.dto.EquipmentTypeRequest;
+import com.duocuc.equipment.dto.EquipmentTypeResponse;
+import com.duocuc.equipment.entity.EquipmentType;
+import com.duocuc.equipment.exception.BusinessRuleException;
+import com.duocuc.equipment.exception.DuplicateResourceException;
+import com.duocuc.equipment.exception.ResourceNotFoundException;
+import com.duocuc.equipment.repository.EquipmentTypeRepository;
+import com.duocuc.equipment.service.EquipmentTypeService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Service;
+
+import java.util.List;
+
+@Service
+public class EquipmentTypeServiceImpl implements EquipmentTypeService {
+
+<span class="fc" id="L20">    private static final Logger log = LoggerFactory.getLogger(EquipmentTypeServiceImpl.class);</span>
+
+    private final EquipmentTypeRepository equipmentTypeRepository;
+
+<span class="fc" id="L24">    public EquipmentTypeServiceImpl(EquipmentTypeRepository equipmentTypeRepository) {</span>
+<span class="fc" id="L25">        this.equipmentTypeRepository = equipmentTypeRepository;</span>
+<span class="fc" id="L26">    }</span>
+
+    @Override
+    public EquipmentTypeResponse save(EquipmentTypeRequest request) {
+        // Business rule: the equipment type name must be unique
+<span class="fc bfc" id="L31" title="All 2 branches covered.">        if (equipmentTypeRepository.existsByNameIgnoreCase(request.name())) {</span>
+<span class="fc" id="L32">            throw new DuplicateResourceException(&quot;An equipment type already exists with name: &quot; + request.name());</span>
+        }
+<span class="fc" id="L34">        EquipmentType equipmentType = new EquipmentType();</span>
+<span class="fc" id="L35">        equipmentType.setName(request.name());</span>
+<span class="fc" id="L36">        equipmentType.setDescription(request.description());</span>
+<span class="fc" id="L37">        EquipmentType saved = equipmentTypeRepository.save(equipmentType);</span>
+<span class="fc" id="L38">        log.info(&quot;Equipment type created with id={} name={}&quot;, saved.getId(), saved.getName());</span>
+<span class="fc" id="L39">        return toResponse(saved);</span>
+    }
+
+    @Override
+    public List&lt;EquipmentTypeResponse&gt; findAll() {
+<span class="fc" id="L44">        log.info(&quot;Listing all equipment types&quot;);</span>
+<span class="fc" id="L45">        return equipmentTypeRepository.findAll().stream()</span>
+<span class="fc" id="L46">                .map(this::toResponse)</span>
+<span class="fc" id="L47">                .toList();</span>
+    }
+
+    @Override
+    public EquipmentTypeResponse findById(Long id) {
+<span class="fc" id="L52">        EquipmentType equipmentType = equipmentTypeRepository.findById(id)</span>
+<span class="pc" id="L53">                .orElseThrow(() -&gt; new ResourceNotFoundException(&quot;Equipment type not found with id: &quot; + id));</span>
+<span class="nc" id="L54">        return toResponse(equipmentType);</span>
+    }
+
+    @Override
+    public EquipmentTypeResponse update(Long id, EquipmentTypeRequest request) {
+<span class="fc" id="L59">        EquipmentType equipmentType = equipmentTypeRepository.findById(id)</span>
+<span class="pc" id="L60">                .orElseThrow(() -&gt; new ResourceNotFoundException(&quot;Equipment type not found with id: &quot; + id));</span>
+
+        // Business rule: an inactive equipment type cannot be modified
+<span class="pc bpc" id="L63" title="1 of 2 branches missed.">        if (Boolean.FALSE.equals(equipmentType.getActive())) {</span>
+<span class="fc" id="L64">            throw new BusinessRuleException(&quot;Cannot modify an inactive equipment type (id: &quot; + id + &quot;)&quot;);</span>
+        }
+<span class="nc bnc" id="L66" title="All 2 branches missed.">        if (!equipmentType.getName().equalsIgnoreCase(request.name())</span>
+<span class="nc bnc" id="L67" title="All 2 branches missed.">                &amp;&amp; equipmentTypeRepository.existsByNameIgnoreCase(request.name())) {</span>
+<span class="nc" id="L68">            throw new DuplicateResourceException(&quot;An equipment type already exists with name: &quot; + request.name());</span>
+        }
+<span class="nc" id="L70">        equipmentType.setName(request.name());</span>
+<span class="nc" id="L71">        equipmentType.setDescription(request.description());</span>
+<span class="nc" id="L72">        EquipmentType updated = equipmentTypeRepository.save(equipmentType);</span>
+<span class="nc" id="L73">        log.info(&quot;Equipment type updated id={}&quot;, updated.getId());</span>
+<span class="nc" id="L74">        return toResponse(updated);</span>
+    }
+
+    @Override
+    public void deactivate(Long id) {
+<span class="fc" id="L79">        EquipmentType equipmentType = equipmentTypeRepository.findById(id)</span>
+<span class="pc" id="L80">                .orElseThrow(() -&gt; new ResourceNotFoundException(&quot;Equipment type not found with id: &quot; + id));</span>
+<span class="fc" id="L81">        equipmentType.setActive(false);</span>
+<span class="fc" id="L82">        equipmentTypeRepository.save(equipmentType);</span>
+<span class="fc" id="L83">        log.info(&quot;Equipment type deactivated id={}&quot;, id);</span>
+<span class="fc" id="L84">    }</span>
+
+    private EquipmentTypeResponse toResponse(EquipmentType t) {
+<span class="fc" id="L87">        return new EquipmentTypeResponse(t.getId(), t.getName(), t.getDescription(), t.getActive());</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.15.202606040825</span></div></body></html>

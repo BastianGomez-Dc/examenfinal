@@ -1,0 +1,12 @@
+/app/src/main/java/com/duocuc/bff/BffApplication.java
+/app/src/main/java/com/duocuc/bff/client/AuthClient.java
+/app/src/main/java/com/duocuc/bff/config/AppConfig.java
+/app/src/main/java/com/duocuc/bff/config/OpenApiConfig.java
+/app/src/main/java/com/duocuc/bff/config/SecurityConfig.java
+/app/src/main/java/com/duocuc/bff/controller/AuthController.java
+/app/src/main/java/com/duocuc/bff/dto/AuthResponse.java
+/app/src/main/java/com/duocuc/bff/dto/LoginRequest.java
+/app/src/main/java/com/duocuc/bff/dto/RegisterRequest.java
+/app/src/main/java/com/duocuc/bff/security/JwtAuthenticationFilter.java
+/app/src/main/java/com/duocuc/bff/security/JwtTokenService.java
+/app/src/main/java/com/duocuc/bff/services/AuthService.java

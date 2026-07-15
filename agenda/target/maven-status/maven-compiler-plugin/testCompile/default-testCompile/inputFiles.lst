@@ -1,0 +1,3 @@
+/app/src/test/java/com/duocuc/msagenda/controller/CitaControllerTest.java
+/app/src/test/java/com/duocuc/msagenda/repository/CitaRepositoryTest.java
+/app/src/test/java/com/duocuc/msagenda/service/CitaServiceImplTest.java

@@ -1,0 +1,86 @@
+### Create part
+POST http://localhost:8086/parts
+Content-Type: application/json
+
+{
+  "name": "USB Keyboard",
+  "description": "Standard replacement keyboard",
+  "price": 12000.00,
+  "stock": 20,
+  "supplierId": 1
+}
+
+### Create part with negative stock (should return 422)
+POST http://localhost:8086/parts
+Content-Type: application/json
+
+{
+  "name": "Invalid Part",
+  "price": 1000.00,
+  "stock": -5,
+  "supplierId": 1
+}
+
+### Create part with a non-existent supplier (should return 422)
+POST http://localhost:8086/parts
+Content-Type: application/json
+
+{
+  "name": "Part without supplier",
+  "price": 1000.00,
+  "stock": 5,
+  "supplierId": 999
+}
+
+### Create invalid part (should return 400)
+POST http://localhost:8086/parts
+Content-Type: application/json
+
+{
+  "name": "",
+  "price": null,
+  "stock": null
+}
+
+### List parts
+GET http://localhost:8086/parts
+
+### Get part by id
+GET http://localhost:8086/parts/1
+
+### Get non-existent part (should return 404)
+GET http://localhost:8086/parts/999
+
+### Update part
+PUT http://localhost:8086/parts/1
+Content-Type: application/json
+
+{
+  "name": "480GB SSD",
+  "description": "SATA III solid state drive - updated",
+  "price": 33000.00,
+  "stock": 25,
+  "supplierId": 1
+}
+
+### Subtract stock (should succeed)
+PATCH http://localhost:8086/parts/1/stock
+Content-Type: application/json
+
+{
+  "quantity": 5
+}
+
+### Subtract more stock than available (should return 422)
+PATCH http://localhost:8086/parts/1/stock
+Content-Type: application/json
+
+{
+  "quantity": 9999
+}
+
+### Deactivate part (should return 204)
+DELETE http://localhost:8086/parts/5
+
+### Swagger UI
+GET http://localhost:8086/swagger-ui.html

@@ -1,0 +1,12 @@
+com/duocuc/bff/dto/AuthResponse.class
+com/duocuc/bff/client/AuthClient.class
+com/duocuc/bff/dto/LoginRequest.class
+com/duocuc/bff/BffApplication.class
+com/duocuc/bff/config/OpenApiConfig.class
+com/duocuc/bff/services/AuthService.class
+com/duocuc/bff/config/AppConfig.class
+com/duocuc/bff/config/SecurityConfig.class
+com/duocuc/bff/dto/RegisterRequest.class
+com/duocuc/bff/security/JwtTokenService.class
+com/duocuc/bff/controller/AuthController.class
+com/duocuc/bff/security/JwtAuthenticationFilter.class

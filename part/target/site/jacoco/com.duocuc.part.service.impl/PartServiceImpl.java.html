@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="es"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>PartServiceImpl.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">part</a> &gt; <a href="index.source.html" class="el_package">com.duocuc.part.service.impl</a> &gt; <span class="el_source">PartServiceImpl.java</span></div><h1>PartServiceImpl.java</h1><pre class="source lang-java linenums">package com.duocuc.part.service.impl;
+
+import com.duocuc.part.dto.PartRequest;
+import com.duocuc.part.dto.PartResponse;
+import com.duocuc.part.dto.StockAdjustmentRequest;
+import com.duocuc.part.entity.Part;
+import com.duocuc.part.exception.BusinessRuleException;
+import com.duocuc.part.exception.ResourceNotFoundException;
+import com.duocuc.part.repository.PartRepository;
+import com.duocuc.part.service.PartService;
+import com.duocuc.part.service.SupplierService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Service;
+
+import java.util.List;
+
+@Service
+public class PartServiceImpl implements PartService {
+
+<span class="fc" id="L21">    private static final Logger log = LoggerFactory.getLogger(PartServiceImpl.class);</span>
+
+    private final PartRepository partRepository;
+    private final SupplierService supplierService;
+
+<span class="fc" id="L26">    public PartServiceImpl(PartRepository partRepository, SupplierService supplierService) {</span>
+<span class="fc" id="L27">        this.partRepository = partRepository;</span>
+<span class="fc" id="L28">        this.supplierService = supplierService;</span>
+<span class="fc" id="L29">    }</span>
+
+    @Override
+    public PartResponse save(PartRequest request) {
+        // Business rule: stock cannot be negative
+<span class="fc bfc" id="L34" title="All 2 branches covered.">        if (request.stock() &lt; 0) {</span>
+<span class="fc" id="L35">            throw new BusinessRuleException(&quot;Stock cannot be negative&quot;);</span>
+        }
+        // Business rule: the supplier must exist in the supplier service
+<span class="fc bfc" id="L38" title="All 2 branches covered.">        if (!supplierService.existsSupplier(request.supplierId())) {</span>
+<span class="fc" id="L39">            throw new BusinessRuleException(&quot;The specified supplier does not exist: &quot; + request.supplierId());</span>
+        }
+
+<span class="fc" id="L42">        Part part = new Part();</span>
+<span class="fc" id="L43">        part.setName(request.name());</span>
+<span class="fc" id="L44">        part.setDescription(request.description());</span>
+<span class="fc" id="L45">        part.setPrice(request.price());</span>
+<span class="fc" id="L46">        part.setStock(request.stock());</span>
+<span class="fc" id="L47">        part.setSupplierId(request.supplierId());</span>
+<span class="fc" id="L48">        Part saved = partRepository.save(part);</span>
+<span class="fc" id="L49">        log.info(&quot;Part created with id={} name={}&quot;, saved.getId(), saved.getName());</span>
+<span class="fc" id="L50">        return toResponse(saved);</span>
+    }
+
+    @Override
+    public List&lt;PartResponse&gt; findAll() {
+<span class="nc" id="L55">        log.info(&quot;Listing all parts&quot;);</span>
+<span class="nc" id="L56">        return partRepository.findAll().stream()</span>
+<span class="nc" id="L57">                .map(this::toResponse)</span>
+<span class="nc" id="L58">                .toList();</span>
+    }
+
+    @Override
+    public PartResponse findById(Long id) {
+<span class="fc" id="L63">        Part part = partRepository.findById(id)</span>
+<span class="pc" id="L64">                .orElseThrow(() -&gt; new ResourceNotFoundException(&quot;Part not found with id: &quot; + id));</span>
+<span class="nc" id="L65">        return toResponse(part);</span>
+    }
+
+    @Override
+    public PartResponse update(Long id, PartRequest request) {
+<span class="fc" id="L70">        Part part = partRepository.findById(id)</span>
+<span class="pc" id="L71">                .orElseThrow(() -&gt; new ResourceNotFoundException(&quot;Part not found with id: &quot; + id));</span>
+
+<span class="pc bpc" id="L73" title="1 of 2 branches missed.">        if (Boolean.FALSE.equals(part.getActive())) {</span>
+<span class="fc" id="L74">            throw new BusinessRuleException(&quot;Cannot modify an inactive part (id: &quot; + id + &quot;)&quot;);</span>
+        }
+<span class="nc bnc" id="L76" title="All 2 branches missed.">        if (request.stock() &lt; 0) {</span>
+<span class="nc" id="L77">            throw new BusinessRuleException(&quot;Stock cannot be negative&quot;);</span>
+        }
+<span class="nc bnc" id="L79" title="All 4 branches missed.">        if (!part.getSupplierId().equals(request.supplierId()) &amp;&amp; !supplierService.existsSupplier(request.supplierId())) {</span>
+<span class="nc" id="L80">            throw new BusinessRuleException(&quot;The specified supplier does not exist: &quot; + request.supplierId());</span>
+        }
+
+<span class="nc" id="L83">        part.setName(request.name());</span>
+<span class="nc" id="L84">        part.setDescription(request.description());</span>
+<span class="nc" id="L85">        part.setPrice(request.price());</span>
+<span class="nc" id="L86">        part.setStock(request.stock());</span>
+<span class="nc" id="L87">        part.setSupplierId(request.supplierId());</span>
+<span class="nc" id="L88">        Part updated = partRepository.save(part);</span>
+<span class="nc" id="L89">        log.info(&quot;Part updated id={}&quot;, updated.getId());</span>
+<span class="nc" id="L90">        return toResponse(updated);</span>
+    }
+
+    @Override
+    public PartResponse subtractStock(Long id, StockAdjustmentRequest request) {
+<span class="fc" id="L95">        Part part = partRepository.findById(id)</span>
+<span class="pc" id="L96">                .orElseThrow(() -&gt; new ResourceNotFoundException(&quot;Part not found with id: &quot; + id));</span>
+
+        // Business rule: cannot subtract more stock than what is available
+<span class="fc bfc" id="L99" title="All 2 branches covered.">        if (request.quantity() &gt; part.getStock()) {</span>
+<span class="fc" id="L100">            throw new BusinessRuleException(</span>
+<span class="fc" id="L101">                    &quot;Insufficient stock: available &quot; + part.getStock() + &quot;, requested &quot; + request.quantity());</span>
+        }
+<span class="fc" id="L103">        part.setStock(part.getStock() - request.quantity());</span>
+<span class="fc" id="L104">        Part updated = partRepository.save(part);</span>
+<span class="fc" id="L105">        log.info(&quot;Stock subtracted id={} quantity={} remainingStock={}&quot;, id, request.quantity(), updated.getStock());</span>
+<span class="fc" id="L106">        return toResponse(updated);</span>
+    }
+
+    @Override
+    public void deactivate(Long id) {
+<span class="fc" id="L111">        Part part = partRepository.findById(id)</span>
+<span class="pc" id="L112">                .orElseThrow(() -&gt; new ResourceNotFoundException(&quot;Part not found with id: &quot; + id));</span>
+<span class="fc" id="L113">        part.setActive(false);</span>
+<span class="fc" id="L114">        partRepository.save(part);</span>
+<span class="fc" id="L115">        log.info(&quot;Part deactivated id={}&quot;, id);</span>
+<span class="fc" id="L116">    }</span>
+
+    private PartResponse toResponse(Part p) {
+<span class="fc" id="L119">        return new PartResponse(</span>
+<span class="fc" id="L120">                p.getId(), p.getName(), p.getDescription(), p.getPrice(),</span>
+<span class="fc" id="L121">                p.getStock(), p.getSupplierId(), p.getActive()</span>
+        );
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.15.202606040825</span></div></body></html>

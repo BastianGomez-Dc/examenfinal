@@ -1,0 +1,66 @@
+### Crear cita
+POST http://localhost:8091/citas
+Content-Type: application/json
+
+{
+  "clienteId": 1,
+  "tecnicoId": 2,
+  "fechaHora": "2026-09-01T10:00:00",
+  "motivo": "Revisión de equipo nuevo"
+}
+
+### Crear cita con cliente inexistente (debe dar 422)
+POST http://localhost:8091/citas
+Content-Type: application/json
+
+{
+  "clienteId": 9999,
+  "tecnicoId": 1,
+  "fechaHora": "2026-09-01T10:00:00"
+}
+
+### Crear cita con fecha pasada (debe dar 422)
+POST http://localhost:8091/citas
+Content-Type: application/json
+
+{
+  "clienteId": 1,
+  "tecnicoId": 1,
+  "fechaHora": "2020-01-01T10:00:00"
+}
+
+### Crear cita con conflicto de horario para el mismo técnico (debe dar 409, tecnicoId=1 ya tiene cita a esa hora en el seed)
+POST http://localhost:8091/citas
+Content-Type: application/json
+
+{
+  "clienteId": 2,
+  "tecnicoId": 1,
+  "fechaHora": "2026-08-01T09:00:00"
+}
+
+### Listar citas
+GET http://localhost:8091/citas
+
+### Obtener cita por id
+GET http://localhost:8091/citas/1
+
+### Obtener cita inexistente (debe dar 404)
+GET http://localhost:8091/citas/999
+
+### Reagendar cita
+PUT http://localhost:8091/citas/1
+Content-Type: application/json
+
+{
+  "clienteId": 1,
+  "tecnicoId": 1,
+  "fechaHora": "2026-08-05T09:00:00",
+  "motivo": "Revisión general - reagendada"
+}
+
+### Cancelar cita (debe dar 204)
+DELETE http://localhost:8091/citas/5
+
+### Swagger UI
+GET http://localhost:8091/swagger-ui.html

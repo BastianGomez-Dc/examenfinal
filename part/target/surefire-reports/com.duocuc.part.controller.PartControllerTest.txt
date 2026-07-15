@@ -1,0 +1,4 @@
+-------------------------------------------------------------------------------
+Test set: com.duocuc.part.controller.PartControllerTest
+-------------------------------------------------------------------------------
+Tests run: 5, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.961 s -- in com.duocuc.part.controller.PartControllerTest

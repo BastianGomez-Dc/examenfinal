@@ -1,0 +1,41 @@
+spring:
+  application:
+    name: order
+  datasource:
+    url: jdbc:postgresql://${DB_HOST:localhost}:${DB_PORT:5432}/${DB_NAME:orderdb}
+    username: ${DB_USER:postgres}
+    password: ${DB_PASS:password}
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    hibernate:
+      ddl-auto: none
+    show-sql: true
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+  flyway:
+    enabled: true
+    locations: classpath:db/migration
+
+server:
+  port: 8088
+
+springdoc:
+  api-docs:
+    path: /api-docs
+  swagger-ui:
+    path: /swagger-ui.html
+
+clients:
+  client-service:
+    base-url: ${CLIENT_URL:http://localhost:8082}
+  equipment-service:
+    base-url: ${EQUIPMENT_URL:http://localhost:8083}
+  technician-service:
+    base-url: ${TECHNICIAN_URL:http://localhost:8084}
+  service-catalog:
+    base-url: ${SERVICE_URL:http://localhost:8085}
+
+logging:
+  level:
+    com.duocuc.order: INFO

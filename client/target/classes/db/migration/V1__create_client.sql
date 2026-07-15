@@ -1,0 +1,9 @@
+CREATE TABLE clients (
+    id BIGSERIAL PRIMARY KEY,
+    name VARCHAR(100) NOT NULL,
+    email VARCHAR(120) NOT NULL UNIQUE,
+    phone VARCHAR(20),
+    address VARCHAR(200),
+    active BOOLEAN NOT NULL DEFAULT TRUE,
+    registration_date DATE NOT NULL DEFAULT CURRENT_DATE
+);

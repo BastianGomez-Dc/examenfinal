@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="es"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>InvoiceServiceImpl.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">invoice</a> &gt; <a href="index.source.html" class="el_package">com.duocuc.invoice.service.impl</a> &gt; <span class="el_source">InvoiceServiceImpl.java</span></div><h1>InvoiceServiceImpl.java</h1><pre class="source lang-java linenums">package com.duocuc.invoice.service.impl;
+
+import com.duocuc.invoice.client.dto.RemoteOrder;
+import com.duocuc.invoice.dto.InvoiceRequest;
+import com.duocuc.invoice.dto.InvoiceResponse;
+import com.duocuc.invoice.entity.Invoice;
+import com.duocuc.invoice.exception.BusinessRuleException;
+import com.duocuc.invoice.exception.DuplicateResourceException;
+import com.duocuc.invoice.exception.ResourceNotFoundException;
+import com.duocuc.invoice.repository.InvoiceRepository;
+import com.duocuc.invoice.service.InvoiceService;
+import com.duocuc.invoice.service.OrderService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Service;
+
+import java.util.List;
+import java.util.Set;
+
+@Service
+public class InvoiceServiceImpl implements InvoiceService {
+
+<span class="fc" id="L23">    private static final Logger log = LoggerFactory.getLogger(InvoiceServiceImpl.class);</span>
+
+<span class="fc" id="L25">    private static final Set&lt;String&gt; INVOICEABLE_STATUSES = Set.of(&quot;READY&quot;, &quot;DELIVERED&quot;);</span>
+
+    private final InvoiceRepository invoiceRepository;
+    private final OrderService orderService;
+
+<span class="fc" id="L30">    public InvoiceServiceImpl(InvoiceRepository invoiceRepository, OrderService orderService) {</span>
+<span class="fc" id="L31">        this.invoiceRepository = invoiceRepository;</span>
+<span class="fc" id="L32">        this.orderService = orderService;</span>
+<span class="fc" id="L33">    }</span>
+
+    @Override
+    public InvoiceResponse save(InvoiceRequest request) {
+        // Business rule: the order must exist in the order service
+<span class="fc" id="L38">        RemoteOrder order = orderService.findOrder(request.orderId())</span>
+<span class="fc" id="L39">                .orElseThrow(() -&gt; new BusinessRuleException(&quot;The specified order does not exist: &quot; + request.orderId()));</span>
+
+        // Business rule: an order cannot be invoiced twice
+<span class="fc bfc" id="L42" title="All 2 branches covered.">        if (invoiceRepository.existsByOrderId(request.orderId())) {</span>
+<span class="fc" id="L43">            throw new DuplicateResourceException(&quot;The order has already been invoiced: &quot; + request.orderId());</span>
+        }
+        // Business rule: only orders in READY or DELIVERED status can be invoiced
+<span class="fc bfc" id="L46" title="All 2 branches covered.">        if (!INVOICEABLE_STATUSES.contains(order.status())) {</span>
+<span class="fc" id="L47">            throw new BusinessRuleException(</span>
+<span class="fc" id="L48">                    &quot;Only orders in READY or DELIVERED status can be invoiced (current status: &quot; + order.status() + &quot;)&quot;);</span>
+        }
+
+<span class="fc" id="L51">        Invoice invoice = new Invoice();</span>
+<span class="fc" id="L52">        invoice.setOrderId(request.orderId());</span>
+<span class="fc" id="L53">        invoice.setTotal(order.total());</span>
+<span class="fc" id="L54">        Invoice saved = invoiceRepository.save(invoice);</span>
+<span class="fc" id="L55">        log.info(&quot;Invoice created with id={} orderId={} total={}&quot;, saved.getId(), saved.getOrderId(), saved.getTotal());</span>
+<span class="fc" id="L56">        return toResponse(saved);</span>
+    }
+
+    @Override
+    public List&lt;InvoiceResponse&gt; findAll() {
+<span class="nc" id="L61">        log.info(&quot;Listing all invoices&quot;);</span>
+<span class="nc" id="L62">        return invoiceRepository.findAll().stream()</span>
+<span class="nc" id="L63">                .map(this::toResponse)</span>
+<span class="nc" id="L64">                .toList();</span>
+    }
+
+    @Override
+    public InvoiceResponse findById(Long id) {
+<span class="fc" id="L69">        Invoice invoice = invoiceRepository.findById(id)</span>
+<span class="pc" id="L70">                .orElseThrow(() -&gt; new ResourceNotFoundException(&quot;Invoice not found with id: &quot; + id));</span>
+<span class="nc" id="L71">        return toResponse(invoice);</span>
+    }
+
+    private InvoiceResponse toResponse(Invoice f) {
+<span class="fc" id="L75">        return new InvoiceResponse(f.getId(), f.getOrderId(), f.getTotal(), f.getIssueDate());</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.15.202606040825</span></div></body></html>

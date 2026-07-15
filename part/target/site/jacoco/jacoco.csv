@@ -1,0 +1,16 @@
+GROUP,PACKAGE,CLASS,INSTRUCTION_MISSED,INSTRUCTION_COVERED,BRANCH_MISSED,BRANCH_COVERED,LINE_MISSED,LINE_COVERED,COMPLEXITY_MISSED,COMPLEXITY_COVERED,METHOD_MISSED,METHOD_COVERED
+part,com.duocuc.part.exception,GlobalExceptionHandler,133,0,2,0,25,0,11,0,10,0
+part,com.duocuc.part.exception,DuplicateResourceException,4,0,0,0,2,0,1,0,1,0
+part,com.duocuc.part.exception,ResourceNotFoundException,0,4,0,0,0,2,0,1,0,1
+part,com.duocuc.part.exception,BusinessRuleException,0,4,0,0,0,2,0,1,0,1
+part,com.duocuc.part.exception,RemoteServiceException,4,0,0,0,2,0,1,0,1,0
+part,com.duocuc.part.config,OpenApiConfig,17,0,0,0,5,0,2,0,2,0
+part,com.duocuc.part.dto,PartResponse,0,24,0,0,0,1,0,1,0,1
+part,com.duocuc.part.dto,PartRequest,0,18,0,0,0,1,0,1,0,1
+part,com.duocuc.part.dto,StockAdjustmentRequest,0,6,0,0,0,1,0,1,0,1
+part,com.duocuc.part,PartApplication,5,3,0,0,2,1,1,1,1,1
+part,com.duocuc.part.client.impl,SupplierClientImpl,55,0,0,0,20,0,3,0,3,0
+part,com.duocuc.part.controller,PartController,7,41,0,0,1,10,1,6,1,6
+part,com.duocuc.part.service.impl,PartServiceImpl,100,213,7,7,17,42,8,12,4,9
+part,com.duocuc.part.service.impl,SupplierServiceImpl,11,0,0,0,4,0,2,0,2,0
+part,com.duocuc.part.entity,Part,0,56,0,0,0,17,0,15,0,15

@@ -1,0 +1,38 @@
+### Login usuario semilla
+POST http://localhost:8090/login
+Content-Type: application/json
+
+{
+  "email": "user1@mail.cl",
+  "password": "abcd.1234"
+}
+
+### Login con credenciales inválidas (debe dar 401)
+POST http://localhost:8090/login
+Content-Type: application/json
+
+{
+  "email": "user1@mail.cl",
+  "password": "password-incorrecta"
+}
+
+### Registrar un nuevo usuario
+POST http://localhost:8090/register
+Content-Type: application/json
+
+{
+  "email": "nuevo.usuario@mail.cl",
+  "password": "abcd.1234"
+}
+
+### Registrar con email ya existente (debe dar 409)
+POST http://localhost:8090/register
+Content-Type: application/json
+
+{
+  "email": "user1@mail.cl",
+  "password": "abcd.1234"
+}
+
+### Swagger UI
+GET http://localhost:8090/swagger-ui.html

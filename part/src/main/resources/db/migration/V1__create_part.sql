@@ -1,0 +1,9 @@
+CREATE TABLE parts (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(100) NOT NULL,
+    description VARCHAR(200),
+    price DECIMAL(10,2) NOT NULL,
+    stock INT NOT NULL,
+    supplier_id BIGINT NOT NULL,
+    active BOOLEAN NOT NULL DEFAULT TRUE
+);

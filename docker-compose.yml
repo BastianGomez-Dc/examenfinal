@@ -1,0 +1,278 @@
+services:
+
+  postgres:
+    image: postgres:17
+    container_name: tecnofix-postgres
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: password
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./init/postgres-init.sql:/docker-entrypoint-initdb.d/init.sql
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+
+  mysql:
+    image: mysql:8.4
+    container_name: tecnofix-mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: password
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+      - ./init/mysql-init.sql:/docker-entrypoint-initdb.d/init.sql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-ppassword"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+
+  ms-cliente:
+    build:
+      context: ./ms-cliente
+    container_name: ms-cliente
+    ports:
+      - "8082:8082"
+    environment:
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_NAME: clientedb
+      DB_USER: postgres
+      DB_PASS: password
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+  ms-equipo:
+    build:
+      context: ./ms-equipo
+    container_name: ms-equipo
+    ports:
+      - "8083:8083"
+    environment:
+      DB_HOST: mysql
+      DB_PORT: 3306
+      DB_NAME: equipodb
+      DB_USER: root
+      DB_PASS: password
+      MS_CLIENTE_URL: http://ms-cliente:8082
+    depends_on:
+      mysql:
+        condition: service_healthy
+      ms-cliente:
+        condition: service_started
+
+  ms-tecnico:
+    build:
+      context: ./ms-tecnico
+    container_name: ms-tecnico
+    ports:
+      - "8084:8084"
+    environment:
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_NAME: tecnicodb
+      DB_USER: postgres
+      DB_PASS: password
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+  ms-servicio:
+    build:
+      context: ./ms-servicio
+    container_name: ms-servicio
+    ports:
+      - "8085:8085"
+    environment:
+      DB_HOST: mysql
+      DB_PORT: 3306
+      DB_NAME: serviciodb
+      DB_USER: root
+      DB_PASS: password
+    depends_on:
+      mysql:
+        condition: service_healthy
+
+  ms-proveedor:
+    build:
+      context: ./ms-proveedor
+    container_name: ms-proveedor
+    ports:
+      - "8087:8087"
+    environment:
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_NAME: proveedordb
+      DB_USER: postgres
+      DB_PASS: password
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+  ms-repuesto:
+    build:
+      context: ./ms-repuesto
+    container_name: ms-repuesto
+    ports:
+      - "8086:8086"
+    environment:
+      DB_HOST: mysql
+      DB_PORT: 3306
+      DB_NAME: repuestodb
+      DB_USER: root
+      DB_PASS: password
+      MS_PROVEEDOR_URL: http://ms-proveedor:8087
+    depends_on:
+      mysql:
+        condition: service_healthy
+      ms-proveedor:
+        condition: service_started
+
+  ms-orden:
+    build:
+      context: ./ms-orden
+    container_name: ms-orden
+    ports:
+      - "8088:8088"
+    environment:
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_NAME: ordendb
+      DB_USER: postgres
+      DB_PASS: password
+      MS_CLIENTE_URL: http://ms-cliente:8082
+      MS_EQUIPO_URL: http://ms-equipo:8083
+      MS_TECNICO_URL: http://ms-tecnico:8084
+      MS_SERVICIO_URL: http://ms-servicio:8085
+    depends_on:
+      postgres:
+        condition: service_healthy
+      ms-cliente:
+        condition: service_started
+      ms-equipo:
+        condition: service_started
+      ms-tecnico:
+        condition: service_started
+      ms-servicio:
+        condition: service_started
+
+  ms-factura:
+    build:
+      context: ./ms-factura
+    container_name: ms-factura
+    ports:
+      - "8089:8089"
+    environment:
+      DB_HOST: mysql
+      DB_PORT: 3306
+      DB_NAME: facturadb
+      DB_USER: root
+      DB_PASS: password
+      MS_ORDEN_URL: http://ms-orden:8088
+    depends_on:
+      mysql:
+        condition: service_healthy
+      ms-orden:
+        condition: service_started
+
+  ms-agenda:
+    build:
+      context: ./ms-agenda
+    container_name: ms-agenda
+    ports:
+      - "8091:8091"
+    environment:
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_NAME: agendadb
+      DB_USER: postgres
+      DB_PASS: password
+      MS_CLIENTE_URL: http://ms-cliente:8082
+      MS_TECNICO_URL: http://ms-tecnico:8084
+    depends_on:
+      postgres:
+        condition: service_healthy
+      ms-cliente:
+        condition: service_started
+      ms-tecnico:
+        condition: service_started
+
+  ms-auth:
+    build:
+      context: ./ms-auth
+    container_name: ms-auth
+    ports:
+      - "8090:8090"
+    environment:
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_NAME: authdb
+      DB_USER: postgres
+      DB_PASS: password
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+  bff:
+    build:
+      context: ./bff
+    container_name: bff
+    ports:
+      - "8081:8081"
+    environment:
+      MS_AUTH_URL: http://ms-auth:8090
+    depends_on:
+      ms-auth:
+        condition: service_started
+
+  api-gateway:
+    build:
+      context: ./api-gateway
+    container_name: api-gateway
+    ports:
+      - "8080:8080"
+    environment:
+      MS_CLIENTE_URL: http://ms-cliente:8082
+      MS_EQUIPO_URL: http://ms-equipo:8083
+      MS_TECNICO_URL: http://ms-tecnico:8084
+      MS_SERVICIO_URL: http://ms-servicio:8085
+      MS_REPUESTO_URL: http://ms-repuesto:8086
+      MS_PROVEEDOR_URL: http://ms-proveedor:8087
+      MS_ORDEN_URL: http://ms-orden:8088
+      MS_FACTURA_URL: http://ms-factura:8089
+      MS_AGENDA_URL: http://ms-agenda:8091
+      BFF_URL: http://bff:8081
+    depends_on:
+      ms-cliente:
+        condition: service_started
+      ms-equipo:
+        condition: service_started
+      ms-tecnico:
+        condition: service_started
+      ms-servicio:
+        condition: service_started
+      ms-repuesto:
+        condition: service_started
+      ms-proveedor:
+        condition: service_started
+      ms-orden:
+        condition: service_started
+      ms-factura:
+        condition: service_started
+      ms-agenda:
+        condition: service_started
+      ms-auth:
+        condition: service_started
+      bff:
+        condition: service_started
+
+volumes:
+  postgres_data:
+  mysql_data:

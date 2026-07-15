@@ -1,0 +1,6 @@
+com\duocuc\equipment\controller\EquipmentTypeControllerTest.class
+com\duocuc\equipment\service\EquipmentTypeServiceImplTest.class
+com\duocuc\equipment\repository\EquipmentRepositoryTest.class
+com\duocuc\equipment\service\EquipmentServiceImplTest.class
+com\duocuc\equipment\controller\EquipmentControllerTest.class
+com\duocuc\equipment\repository\EquipmentTypeRepositoryTest.class

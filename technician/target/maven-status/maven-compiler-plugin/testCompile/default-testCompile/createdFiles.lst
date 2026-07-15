@@ -1,0 +1,6 @@
+com\duocuc\technician\controller\TechnicianControllerTest.class
+com\duocuc\technician\controller\SpecialtyControllerTest.class
+com\duocuc\technician\repository\TechnicianRepositoryTest.class
+com\duocuc\technician\repository\SpecialtyRepositoryTest.class
+com\duocuc\technician\service\SpecialtyServiceImplTest.class
+com\duocuc\technician\service\TechnicianServiceImplTest.class

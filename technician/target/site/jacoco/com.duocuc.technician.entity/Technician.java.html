@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="es"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Technician.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">technician</a> &gt; <a href="index.source.html" class="el_package">com.duocuc.technician.entity</a> &gt; <span class="el_source">Technician.java</span></div><h1>Technician.java</h1><pre class="source lang-java linenums">package com.duocuc.technician.entity;
+
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Table;
+
+import java.time.LocalDate;
+
+@Entity
+@Table(name = &quot;technicians&quot;)
+public class Technician {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    @Column(nullable = false, length = 100)
+    private String name;
+
+    @Column(nullable = false, unique = true, length = 120)
+    private String email;
+
+    @Column(length = 20)
+    private String phone;
+
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = &quot;specialty_id&quot;, nullable = false)
+    private Specialty specialty;
+
+<span class="fc" id="L36">    @Column(nullable = false)</span>
+<span class="fc" id="L37">    private Boolean active = true;</span>
+
+<span class="fc" id="L39">    @Column(name = &quot;hire_date&quot;, nullable = false)</span>
+<span class="fc" id="L40">    private LocalDate hireDate = LocalDate.now();</span>
+
+<span class="fc" id="L42">    public Technician() {}</span>
+
+<span class="fc" id="L44">    public Long getId() { return id; }</span>
+<span class="fc" id="L45">    public void setId(Long id) { this.id = id; }</span>
+
+<span class="fc" id="L47">    public String getName() { return name; }</span>
+<span class="fc" id="L48">    public void setName(String name) { this.name = name; }</span>
+
+<span class="fc" id="L50">    public String getEmail() { return email; }</span>
+<span class="fc" id="L51">    public void setEmail(String email) { this.email = email; }</span>
+
+<span class="fc" id="L53">    public String getPhone() { return phone; }</span>
+<span class="fc" id="L54">    public void setPhone(String phone) { this.phone = phone; }</span>
+
+<span class="fc" id="L56">    public Specialty getSpecialty() { return specialty; }</span>
+<span class="fc" id="L57">    public void setSpecialty(Specialty specialty) { this.specialty = specialty; }</span>
+
+<span class="fc" id="L59">    public Boolean getActive() { return active; }</span>
+<span class="fc" id="L60">    public void setActive(Boolean active) { this.active = active; }</span>
+
+<span class="fc" id="L62">    public LocalDate getHireDate() { return hireDate; }</span>
+<span class="nc" id="L63">    public void setHireDate(LocalDate hireDate) { this.hireDate = hireDate; }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.15.202606040825</span></div></body></html>

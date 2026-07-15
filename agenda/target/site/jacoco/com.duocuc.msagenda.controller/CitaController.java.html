@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>CitaController.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">ms-agenda</a> &gt; <a href="index.source.html" class="el_package">com.duocuc.msagenda.controller</a> &gt; <span class="el_source">CitaController.java</span></div><h1>CitaController.java</h1><pre class="source lang-java linenums">package com.duocuc.msagenda.controller;
+
+import com.duocuc.msagenda.dto.CitaRequest;
+import com.duocuc.msagenda.dto.CitaResponse;
+import com.duocuc.msagenda.service.CitaService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import java.util.List;
+
+@RestController
+@RequestMapping(&quot;/citas&quot;)
+@Tag(name = &quot;Citas&quot;, description = &quot;Agendamiento de citas entre clientes y técnicos de TecnoFix&quot;)
+public class CitaController {
+
+    private final CitaService citaService;
+
+<span class="fc" id="L31">    public CitaController(CitaService citaService) {</span>
+<span class="fc" id="L32">        this.citaService = citaService;</span>
+<span class="fc" id="L33">    }</span>
+
+    @Operation(summary = &quot;Crear una cita&quot;)
+    @ApiResponses({
+            @ApiResponse(responseCode = &quot;201&quot;, description = &quot;Cita creada&quot;),
+            @ApiResponse(responseCode = &quot;400&quot;, description = &quot;Datos inválidos&quot;),
+            @ApiResponse(responseCode = &quot;409&quot;, description = &quot;El técnico ya tiene una cita a esa hora&quot;),
+            @ApiResponse(responseCode = &quot;422&quot;, description = &quot;Cliente o técnico no existe, o fecha pasada&quot;),
+            @ApiResponse(responseCode = &quot;502&quot;, description = &quot;Un microservicio remoto no está disponible&quot;)
+    })
+    @PostMapping
+    public ResponseEntity&lt;CitaResponse&gt; create(@RequestBody @Valid CitaRequest request) {
+<span class="fc" id="L45">        CitaResponse response = citaService.save(request);</span>
+<span class="fc" id="L46">        return ResponseEntity.status(HttpStatus.CREATED).body(response);</span>
+    }
+
+    @Operation(summary = &quot;Listar todas las citas&quot;)
+    @ApiResponse(responseCode = &quot;200&quot;, description = &quot;Listado de citas&quot;)
+    @GetMapping
+    public ResponseEntity&lt;List&lt;CitaResponse&gt;&gt; findAll() {
+<span class="fc" id="L53">        return ResponseEntity.ok(citaService.findAll());</span>
+    }
+
+    @Operation(summary = &quot;Obtener una cita por id&quot;)
+    @ApiResponses({
+            @ApiResponse(responseCode = &quot;200&quot;, description = &quot;Cita encontrada&quot;),
+            @ApiResponse(responseCode = &quot;404&quot;, description = &quot;Cita no existe&quot;)
+    })
+    @GetMapping(&quot;/{id}&quot;)
+    public ResponseEntity&lt;CitaResponse&gt; findById(@PathVariable Long id) {
+<span class="fc" id="L63">        return ResponseEntity.ok(citaService.findById(id));</span>
+    }
+
+    @Operation(summary = &quot;Reagendar una cita&quot;)
+    @ApiResponses({
+            @ApiResponse(responseCode = &quot;200&quot;, description = &quot;Cita actualizada&quot;),
+            @ApiResponse(responseCode = &quot;404&quot;, description = &quot;Cita no existe&quot;),
+            @ApiResponse(responseCode = &quot;409&quot;, description = &quot;El técnico ya tiene una cita a esa hora&quot;),
+            @ApiResponse(responseCode = &quot;422&quot;, description = &quot;Cita cancelada, cliente/técnico no existe o fecha pasada&quot;)
+    })
+    @PutMapping(&quot;/{id}&quot;)
+    public ResponseEntity&lt;CitaResponse&gt; update(@PathVariable Long id, @RequestBody @Valid CitaRequest request) {
+<span class="nc" id="L75">        return ResponseEntity.ok(citaService.update(id, request));</span>
+    }
+
+    @Operation(summary = &quot;Cancelar una cita (eliminación lógica)&quot;)
+    @ApiResponses({
+            @ApiResponse(responseCode = &quot;204&quot;, description = &quot;Cita cancelada&quot;),
+            @ApiResponse(responseCode = &quot;404&quot;, description = &quot;Cita no existe&quot;)
+    })
+    @DeleteMapping(&quot;/{id}&quot;)
+    public ResponseEntity&lt;Void&gt; cancelar(@PathVariable Long id) {
+<span class="fc" id="L85">        citaService.cancelar(id);</span>
+<span class="fc" id="L86">        return ResponseEntity.noContent().build();</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.15.202606040825</span></div></body></html>

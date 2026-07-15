@@ -1,0 +1,54 @@
+### Create supplier
+POST http://localhost:8087/suppliers
+Content-Type: application/json
+
+{
+  "name": "New Supplier SPA",
+  "email": "contact@newsupplier.cl",
+  "phone": "+56229998888",
+  "address": "Av. New 123"
+}
+
+### Create supplier with duplicate email (should return 409)
+POST http://localhost:8087/suppliers
+Content-Type: application/json
+
+{
+  "name": "Another Supplier",
+  "email": "contact@newsupplier.cl"
+}
+
+### Create invalid supplier (should return 400)
+POST http://localhost:8087/suppliers
+Content-Type: application/json
+
+{
+  "name": "",
+  "email": "not-an-email"
+}
+
+### List suppliers
+GET http://localhost:8087/suppliers
+
+### Get supplier by id
+GET http://localhost:8087/suppliers/1
+
+### Get non-existent supplier (should return 404)
+GET http://localhost:8087/suppliers/999
+
+### Update supplier
+PUT http://localhost:8087/suppliers/1
+Content-Type: application/json
+
+{
+  "name": "TecnoParts Distribution Updated",
+  "email": "contact@tecnoparts.cl",
+  "phone": "+56221111111",
+  "address": "New address 456"
+}
+
+### Deactivate supplier (should return 204)
+DELETE http://localhost:8087/suppliers/5
+
+### Swagger UI
+GET http://localhost:8087/swagger-ui.html
